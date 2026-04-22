@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Billingpro - Enterprise AC Service</title>
+    <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons via CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
@@ -33,21 +35,26 @@
 </head>
 <body class="bg-slate-50 font-sans text-slate-800 overflow-hidden relative">
 
+    <!-- Container untuk Notifikasi Toast -->
     <div id="toast-container" class="fixed bottom-4 right-4 z-[400] flex flex-col gap-2"></div>
 
+    <!-- ========================================== -->
+    <!-- VIEW 0: HALAMAN LOGIN                      -->
+    <!-- ========================================== -->
     <div id="view-login" class="fixed inset-0 z-[200] bg-slate-900 flex items-center justify-center fade-in">
         <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1621905252507-b35492cc74b4?q=80&w=2069&auto=format&fit=crop')] bg-cover bg-center opacity-10"></div>
         
         <div class="bg-white p-8 sm:p-10 rounded-3xl w-full max-w-md shadow-2xl relative z-10 mx-4">
+            <!-- LOGO DENGAN FUNGSI RAHASIA (Klik 3x) -->
             <div class="text-center mb-8 select-none cursor-pointer" onclick="revealOwner()">
-                <div class="bg-blue-600 w-16 h-16 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-lg shadow-blue-200">
+                <div class="bg-blue-600 w-16 h-16 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-lg shadow-blue-200 shrink-0">
                     <i data-lucide="wrench" class="w-8 h-8 text-white"></i>
                 </div>
                 <h1 class="text-3xl font-bold text-slate-800 tracking-tight">Billingpro<span class="text-blue-500">.</span></h1>
                 <p class="text-sm text-slate-500 mt-1">Sistem Manajemen Bengkel AC</p>
             </div>
 
-            <form onsubmit="processLogin(event)" class="space-y-5">
+            <form onsubmit="return processLogin(event)" class="space-y-5">
                 <div>
                     <label class="block text-sm font-semibold text-slate-700 mb-1.5">Masuk Sebagai</label>
                     <div id="role-grid" class="grid grid-cols-2 gap-3">
@@ -88,23 +95,27 @@
                         <input type="password" value="password123" class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium" required />
                     </div>
                 </div>
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-blue-200 transition-all transform active:scale-[0.98]">
+                
+                <button type="button" onclick="processLogin(event)" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-blue-200 transition-all transform active:scale-[0.98]">
                     Masuk ke Sistem
                 </button>
             </form>
         </div>
     </div>
 
+    <!-- ========================================== -->
+    <!-- VIEW 0.5: SUPER ADMIN DASHBOARD (PEMILIK)  -->
+    <!-- ========================================== -->
     <div id="app-superadmin" class="hidden h-screen w-full fade-in pt-0">
         <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col shadow-xl flex-shrink-0 relative z-20">
             <div class="p-6 border-b border-slate-800">
                 <div class="flex items-center gap-3">
-                    <div class="bg-purple-600 p-2 rounded-lg">
+                    <div class="bg-purple-600 p-2.5 rounded-xl shrink-0">
                         <i data-lucide="shield-check" class="w-6 h-6 text-white"></i>
                     </div>
-                    <div>
-                        <h1 class="text-xl font-bold text-white tracking-tight">Billingpro<span class="text-purple-400">.</span></h1>
-                        <p class="text-[10px] text-slate-400 uppercase tracking-widest">Sistem Utama</p>
+                    <div class="flex-1 min-w-0">
+                        <h1 class="text-xl font-bold text-white tracking-tight truncate">Billingpro<span class="text-purple-400">.</span></h1>
+                        <p class="text-[10px] text-slate-400 uppercase tracking-widest truncate">Sistem Utama</p>
                     </div>
                 </div>
             </div>
@@ -155,6 +166,7 @@
             </header>
 
             <div class="flex-1 overflow-auto p-8 relative">
+                <!-- TAB: SA DASHBOARD -->
                 <div id="view-sa-dashboard" class="sa-view-section block space-y-6 fade-in">
                     <div class="flex justify-between items-end mb-6">
                         <div>
@@ -294,16 +306,19 @@
         </main>
     </div>
 
+    <!-- ========================================== -->
+    <!-- VIEW 1: ADMIN DASHBOARD (KLIEN/BENGKEL)    -->
+    <!-- ========================================== -->
     <div id="app-admin" class="hidden h-screen w-full fade-in pt-0">
         <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col shadow-xl flex-shrink-0 relative z-20">
             <div class="p-6 border-b border-slate-800">
                 <div class="flex items-center gap-3">
-                    <div class="bg-blue-500 p-2 rounded-lg">
+                    <div class="bg-blue-500 p-2.5 rounded-xl shrink-0">
                         <i data-lucide="wrench" class="w-6 h-6 text-white"></i>
                     </div>
-                    <div>
-                        <h1 class="text-xl font-bold text-white tracking-tight">Billingpro<span class="text-blue-400">.</span></h1>
-                        <p class="text-xs text-slate-400">Enterprise AC Service</p>
+                    <div class="flex-1 min-w-0">
+                        <h1 class="text-xl font-bold text-white tracking-tight truncate">Billingpro<span class="text-blue-400">.</span></h1>
+                        <p class="text-xs text-slate-400 truncate">Enterprise AC Service</p>
                     </div>
                 </div>
             </div>
@@ -603,6 +618,9 @@
         </main>
     </div>
 
+    <!-- ========================================== -->
+    <!-- VIEW 2: TEKNISI APP (MOBILE FIRST)         -->
+    <!-- ========================================== -->
     <div id="app-tech" class="hidden w-full h-screen bg-slate-800 flex items-center justify-center pt-0 pb-4 px-4 sm:p-16">
         <div class="w-full max-w-[400px] h-full sm:max-h-[850px] bg-slate-50 sm:rounded-[2.5rem] sm:border-[8px] border-slate-900 relative overflow-hidden flex flex-col mobile-frame fade-in">
             
@@ -692,6 +710,7 @@
                 <i data-lucide="pen-tool" class="w-6 h-6"></i>
             </button>
 
+            <!-- BOTTOM NAVIGATION -->
             <div class="absolute bottom-0 w-full bg-white border-t border-slate-200 flex justify-between px-4 pt-2 pb-safe z-30">
                 <button onclick="switchTechTab('home')" id="btn-tech-home" class="tech-menu-btn flex flex-col items-center gap-1 text-blue-600 w-16">
                     <div class="p-1.5 rounded-lg bg-blue-50"><i data-lucide="clipboard-list" class="w-5 h-5"></i></div>
@@ -714,6 +733,11 @@
     </div>
 
 
+    <!-- ========================================== -->
+    <!-- MODALS (POP-UPS)                           -->
+    <!-- ========================================== -->
+
+    <!-- 1. MODAL ADMIN: TAMBAH ORDER BARU (LENGKAP DGN CEKLIS 4 KATEGORI) -->
     <div id="modal-add-order" class="fixed inset-0 z-[300] bg-slate-900/50 hidden items-center justify-center backdrop-blur-sm transition-all py-4 px-2">
         <div class="bg-white rounded-3xl w-full max-w-3xl shadow-2xl modal-enter overflow-hidden flex flex-col max-h-full">
             <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
@@ -789,7 +813,6 @@
                                     <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Cuci Besar (Overhaul)</span></label>
                                 </div>
                             </div>
-                            
                             <div>
                                 <h5 class="text-sm font-bold text-slate-800 mb-2 flex items-center gap-1"><i data-lucide="wind" class="w-4 h-4 text-sky-500"></i> Penanganan Freon</h5>
                                 <div class="space-y-2">
@@ -798,7 +821,6 @@
                                     <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Isi Full Freon + Vakum</span></label>
                                 </div>
                             </div>
-
                             <div>
                                 <h5 class="text-sm font-bold text-slate-800 mb-2 flex items-center gap-1"><i data-lucide="arrow-left-right" class="w-4 h-4 text-amber-500"></i> Bongkar & Pasang</h5>
                                 <div class="space-y-2">
@@ -807,7 +829,6 @@
                                     <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Bongkar & Pasang (Pindah Titik)</span></label>
                                 </div>
                             </div>
-
                             <div>
                                 <h5 class="text-sm font-bold text-slate-800 mb-2 flex items-center gap-1"><i data-lucide="tool" class="w-4 h-4 text-red-500"></i> Perbaikan & Sparepart</h5>
                                 <div class="space-y-2">
@@ -830,6 +851,7 @@
         </div>
     </div>
 
+    <!-- 2. MODAL ADMIN: DETAIL PROFIL TEKNISI (HRD & TRACKING) -->
     <div id="modal-tech-detail" class="fixed inset-0 z-[300] bg-slate-900/60 hidden items-center justify-center backdrop-blur-sm transition-all py-4 px-2">
         <div class="bg-white rounded-3xl w-full max-w-5xl shadow-2xl modal-enter overflow-hidden flex flex-col max-h-full">
             <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center shrink-0">
@@ -840,7 +862,6 @@
             </div>
             <div class="p-6 overflow-y-auto flex-1 bg-slate-50">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    
                     <div class="space-y-6">
                         <div class="bg-white p-5 rounded-2xl border border-slate-200 text-center shadow-sm relative">
                             <button class="absolute top-3 right-3 text-slate-400 hover:text-blue-600" title="Edit Profil"><i data-lucide="edit" class="w-4 h-4"></i></button>
@@ -949,6 +970,7 @@
         </div>
     </div>
 
+    <!-- 3. MODAL TEKNISI: LAPORAN HASIL PEKERJAAN (LENGKAP DGN DATALIST MATERIAL) -->
     <div id="modal-tech-input" class="fixed inset-0 z-[300] bg-slate-900/80 hidden items-end sm:items-center justify-center backdrop-blur-sm transition-all sm:py-4">
         <div class="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-[400px] shadow-2xl modal-enter overflow-hidden flex flex-col max-h-[90vh]">
             <div class="px-5 py-4 border-b border-slate-200 bg-blue-600 text-white flex justify-between items-center">
@@ -985,6 +1007,9 @@
                                     <option value="Kapasitor Kompresor 15uF"></option>
                                     <option value="Kapasitor Kompresor 20uF"></option>
                                     <option value="Kapasitor Kompresor 25uF"></option>
+                                    <option value="Kapasitor Kompresor 30uF"></option>
+                                    <option value="Kapasitor Kipas (Fan) 1.5uF"></option>
+                                    <option value="Kapasitor Kipas (Fan) 2.0uF"></option>
                                     <option value="Modul PCB Universal"></option>
                                     <option value="Termistor (Sensor Suhu)"></option>
                                     <option value="Isolasi Pipa (Duct Tape)"></option>
@@ -1010,6 +1035,7 @@
         </div>
     </div>
 
+    <!-- 4. MODAL ADMIN: CETAK INVOICE -->
     <div id="modal-invoice" class="fixed inset-0 z-[300] bg-slate-900/60 hidden items-center justify-center backdrop-blur-sm transition-all p-4">
         <div class="bg-white rounded-xl w-full max-w-lg shadow-2xl modal-enter relative">
             <button onclick="closeModal('modal-invoice')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-100 rounded-full p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -1077,6 +1103,7 @@
         </div>
     </div>
 
+    <!-- 5. MODAL SUPER ADMIN: DETAIL KLIEN SAAS -->
     <div id="modal-client-detail" class="fixed inset-0 z-[300] bg-slate-900/60 hidden items-center justify-center backdrop-blur-sm transition-all py-4 px-2">
         <div class="bg-white rounded-3xl w-full max-w-4xl shadow-2xl modal-enter overflow-hidden flex flex-col max-h-full">
             <div class="px-6 py-4 border-b border-slate-200 bg-purple-50 flex justify-between items-center shrink-0">
@@ -1130,6 +1157,7 @@
         </div>
     </div>
 
+    <!-- 6. MODAL ADMIN: TAMBAH TEKNISI BARU -->
     <div id="modal-add-tech" class="fixed inset-0 z-[300] bg-slate-900/50 hidden items-center justify-center backdrop-blur-sm transition-all py-4 px-2">
         <div class="bg-white rounded-3xl w-full max-w-2xl shadow-2xl modal-enter overflow-hidden flex flex-col max-h-full">
             <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
@@ -1176,10 +1204,11 @@
         </div>
     </div>
 
+    <!-- JAVASCRIPT LOGIC BROWSER UI -->
     <script>
         lucide.createIcons();
 
-        // LOGIC NOTIFIKASI TOAST MENGGANTIKAN ALERT()
+        // LOGIC NOTIFIKASI TOAST
         window.showToast = function(message, type='success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -1210,24 +1239,41 @@
 
         // FUNGSI GANTI APLIKASI (LOGIN / LOGOUT)
         function processLogin(e) {
-            e.preventDefault();
-            const role = document.querySelector('input[name="role"]:checked').value;
-            
-            document.getElementById('view-login').classList.add('hidden');
-            document.getElementById('view-login').classList.remove('flex');
-            
-            if (role === 'superadmin') {
-                document.getElementById('app-superadmin').classList.remove('hidden');
-                document.getElementById('app-superadmin').classList.add('flex');
-            } else if (role === 'admin') {
-                document.getElementById('app-admin').classList.remove('hidden');
-                document.getElementById('app-admin').classList.add('flex');
-            } else {
-                document.getElementById('app-tech').classList.remove('hidden');
-                document.getElementById('app-tech').classList.add('flex');
+            try {
+                if (e) e.preventDefault();
+                
+                const roleInput = document.querySelector('input[name="role"]:checked');
+                const role = roleInput ? roleInput.value : 'admin'; 
+                
+                const viewLogin = document.getElementById('view-login');
+                if (viewLogin) {
+                    viewLogin.classList.add('hidden');
+                    viewLogin.classList.remove('flex');
+                }
+                
+                if (role === 'superadmin') {
+                    document.getElementById('app-superadmin').classList.remove('hidden');
+                    document.getElementById('app-superadmin').classList.add('flex');
+                } else if (role === 'admin') {
+                    document.getElementById('app-admin').classList.remove('hidden');
+                    document.getElementById('app-admin').classList.add('flex');
+                } else {
+                    document.getElementById('app-tech').classList.remove('hidden');
+                    document.getElementById('app-tech').classList.add('flex');
+                }
+                
+                setTimeout(() => {
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                }, 50);
+                
+                if (typeof showToast === 'function') {
+                    showToast('Login berhasil.', 'success');
+                }
+            } catch (err) {
+                console.error("Login Error: ", err);
             }
-            setTimeout(() => lucide.createIcons(), 50);
-            showToast('Login berhasil.', 'success');
+            
+            return false; 
         }
 
         function processLogout() {
@@ -1292,6 +1338,16 @@
         }
 
         // FUNGSI BUKA TUTUP MODAL
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+            document.getElementById(modalId).classList.add('flex');
+        }
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+            document.getElementById(modalId).classList.remove('flex');
+        }
+    </script>
+
     <!-- ========================================== -->
     <!-- LOGIKA FIREBASE (REALTIME DATABASE / BAAS) -->
     <!-- ========================================== -->
