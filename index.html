@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Billingpro - Enterprise AC Service</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons via CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .mobile-frame {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
+        
+        /* Modal Animation */
+        .modal-enter { animation: modalEnter 0.2s ease-out; }
+        @keyframes modalEnter {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Custom Scrollbar for better look in forms */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 overflow-hidden relative">
+
+    <!-- Container untuk Notifikasi Toast -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-[400] flex flex-col gap-2"></div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 0: HALAMAN LOGIN                      -->
+    <!-- ========================================== -->
+    <div id="view-login" class="fixed inset-0 z-[200] bg-slate-900 flex items-center justify-center fade-in">
+        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1621905252507-b35492cc74b4?q=80&w=2069&auto=format&fit=crop')] bg-cover bg-center opacity-10"></div>
+        
+        <div class="bg-white p-8 sm:p-10 rounded-3xl w-full max-w-md shadow-2xl relative z-10 mx-4">
+            <!-- LOGO DENGAN FUNGSI RAHASIA (Klik 3x) -->
+            <div class="text-center mb-8 select-none cursor-pointer" onclick="revealOwner()">
+                <div class="bg-blue-600 w-16 h-16 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-lg shadow-blue-200">
+                    <i data-lucide="wrench" class="w-8 h-8 text-white"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-slate-800 tracking-tight">Billingpro<span class="text-blue-500">.</span></h1>
+                <p class="text-sm text-slate-500 mt-1">Sistem Manajemen Bengkel AC</p>
+            </div>
+
+            <form onsubmit="processLogin(event)" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Masuk Sebagai</label>
+                    <div id="role-grid" class="grid grid-cols-2 gap-3">
+                        <label class="cursor-pointer hidden" id="btn-pemilik">
+                            <input type="radio" name="role" value="superadmin" class="peer sr-only">
+                            <div class="text-center p-3 rounded-xl border-2 border-slate-200 peer-checked:border-purple-600 peer-checked:bg-purple-50 hover:bg-slate-50 transition-all">
+                                <i data-lucide="shield" class="w-6 h-6 mx-auto mb-1 text-slate-600 peer-checked:text-purple-600"></i>
+                                <span class="text-sm font-bold text-slate-700">Pemilik</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="role" value="admin" class="peer sr-only" checked>
+                            <div class="text-center p-3 rounded-xl border-2 border-slate-200 peer-checked:border-blue-600 peer-checked:bg-blue-50 hover:bg-slate-50 transition-all">
+                                <i data-lucide="monitor" class="w-6 h-6 mx-auto mb-1 text-slate-600 peer-checked:text-blue-600"></i>
+                                <span class="text-sm font-bold text-slate-700">Admin</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="role" value="tech" class="peer sr-only">
+                            <div class="text-center p-3 rounded-xl border-2 border-slate-200 peer-checked:border-blue-600 peer-checked:bg-blue-50 hover:bg-slate-50 transition-all">
+                                <i data-lucide="smartphone" class="w-6 h-6 mx-auto mb-1 text-slate-600 peer-checked:text-blue-600"></i>
+                                <span class="text-sm font-bold text-slate-700">Teknisi</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Email / ID Pengguna</label>
+                    <div class="relative">
+                        <i data-lucide="user" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" value="admin@majujaya.com" class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium" required />
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1.5">Kata Sandi</label>
+                    <div class="relative">
+                        <i data-lucide="lock" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="password" value="password123" class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium" required />
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-blue-200 transition-all transform active:scale-[0.98]">
+                    Masuk ke Sistem
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 0.5: SUPER ADMIN DASHBOARD (PEMILIK)  -->
+    <!-- ========================================== -->
+    <div id="app-superadmin" class="hidden h-screen w-full fade-in pt-0">
+        <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col shadow-xl flex-shrink-0 relative z-20">
+            <div class="p-6 border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="bg-purple-600 p-2 rounded-lg">
+                        <i data-lucide="shield-check" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-white tracking-tight">Billingpro<span class="text-purple-400">.</span></h1>
+                        <p class="text-[10px] text-slate-400 uppercase tracking-widest">Sistem Utama</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 border-b border-slate-800 bg-slate-800/50">
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Login Sebagai</p>
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center text-white font-bold text-xs">SA</div>
+                    <div class="flex-1 truncate">
+                        <p class="text-sm font-medium text-white truncate">Pemilik Sistem</p>
+                        <p class="text-xs text-slate-400 truncate">Super Administrator</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+                <button onclick="switchSuperAdminTab('dashboard')" id="btn-sa-dashboard" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all bg-purple-600 text-white shadow-md sa-menu-btn">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <span class="font-medium">Dashboard Klien</span>
+                </button>
+                <button onclick="switchSuperAdminTab('billing')" id="btn-sa-billing" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 hover:text-white sa-menu-btn">
+                    <i data-lucide="receipt" class="w-5 h-5"></i>
+                    <span class="font-medium">Tagihan Sewa</span>
+                </button>
+                <button onclick="switchSuperAdminTab('settings')" id="btn-sa-settings" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 hover:text-white sa-menu-btn">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                    <span class="font-medium">Pengaturan Sistem</span>
+                </button>
+            </nav>
+
+            <div class="p-4 border-t border-slate-800">
+                <button onclick="processLogout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-400/10 transition-all">
+                    <i data-lucide="log-out" class="w-5 h-5"></i>
+                    <span class="font-medium">Keluar (Logout)</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col h-full overflow-hidden bg-slate-50">
+            <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between sticky top-0 z-10">
+                <h2 class="text-lg font-bold text-slate-800">Control Panel Utama</h2>
+                <div class="flex items-center gap-4">
+                    <button class="p-2 text-slate-400 hover:text-purple-600 transition-colors relative">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="flex-1 overflow-auto p-8 relative">
+                <!-- TAB: SA DASHBOARD -->
+                <div id="view-sa-dashboard" class="sa-view-section block space-y-6 fade-in">
+                    <div class="flex justify-between items-end mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-800">Overview Bisnis (SaaS)</h2>
+                            <p class="text-slate-500 mt-1">Pantau seluruh bengkel AC yang menyewa aplikasi Anda.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600"><i data-lucide="building-2" class="w-7 h-7"></i></div>
+                            <div><p class="text-sm font-medium text-slate-500">Total Klien (Bengkel)</p><p class="text-2xl font-bold text-slate-800">45 Perusahaan</p></div>
+                        </div>
+                        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600"><i data-lucide="users" class="w-7 h-7"></i></div>
+                            <div><p class="text-sm font-medium text-slate-500">Total Teknisi Aktif</p><p class="text-2xl font-bold text-slate-800">128 Orang</p></div>
+                        </div>
+                        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600"><i data-lucide="wallet" class="w-7 h-7"></i></div>
+                            <div><p class="text-sm font-medium text-slate-500">Pendapatan Langganan</p><p class="text-2xl font-bold text-slate-800">Rp 15.500.000<span class="text-sm font-normal text-slate-500"> /bln</span></p></div>
+                        </div>
+                    </div>
+
+                    <!-- TABEL DAFTAR KLIEN (BISA DIKLIK) -->
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mt-6">
+                        <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
+                            <h3 class="font-bold text-slate-800">Daftar Klien (Perusahaan AC)</h3>
+                            <div class="relative">
+                                <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                <input type="text" placeholder="Cari nama klien..." class="pl-9 pr-4 py-1.5 bg-white border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500">
+                                        <th class="p-4 font-semibold">Nama Bengkel AC</th>
+                                        <th class="p-4 font-semibold">Admin Pengelola</th>
+                                        <th class="p-4 font-semibold text-center">Jml Teknisi</th>
+                                        <th class="p-4 font-semibold">Status Langganan</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 text-sm">
+                                    <tr class="hover:bg-purple-50 cursor-pointer transition-colors" onclick="openModal('modal-client-detail')">
+                                        <td class="p-4">
+                                            <p class="font-bold text-slate-800">PT Maju Jaya AC</p>
+                                            <p class="text-xs text-slate-500 mt-0.5">Jakarta Selatan</p>
+                                        </td>
+                                        <td class="p-4">
+                                            <p class="text-slate-800 font-medium">Budi Santoso</p>
+                                            <p class="text-xs text-slate-500 mt-0.5">0812-xxxx-xxxx</p>
+                                        </td>
+                                        <td class="p-4 text-center font-bold text-slate-700">6</td>
+                                        <td class="p-4"><span class="px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700 border border-emerald-200">Aktif (Lunas)</span></td>
+                                    </tr>
+                                    <tr class="hover:bg-purple-50 cursor-pointer transition-colors" onclick="openModal('modal-client-detail')">
+                                        <td class="p-4">
+                                            <p class="font-bold text-slate-800">Sinar Dingin AC</p>
+                                            <p class="text-xs text-slate-500 mt-0.5">Bandung Raya</p>
+                                        </td>
+                                        <td class="p-4">
+                                            <p class="text-slate-800 font-medium">Hendra Wijaya</p>
+                                            <p class="text-xs text-slate-500 mt-0.5">0856-xxxx-xxxx</p>
+                                        </td>
+                                        <td class="p-4 text-center font-bold text-slate-700">12</td>
+                                        <td class="p-4"><span class="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700 border border-red-200">Menunggak (Blokir)</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-sa-billing" class="sa-view-section hidden space-y-6 fade-in">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Tagihan Sewa Aplikasi</h2>
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500">
+                                    <th class="p-4 font-semibold">Nama Klien</th>
+                                    <th class="p-4 font-semibold">Paket Sewa</th>
+                                    <th class="p-4 font-semibold">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-sm">
+                                <tr class="hover:bg-slate-50">
+                                    <td class="p-4 font-bold text-slate-800">PT Maju Jaya AC</td>
+                                    <td class="p-4 text-slate-600">Premium (Rp 350.000/bln)</td>
+                                    <td class="p-4"><span class="px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">Lunas</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB: SA PENGATURAN (SISTEM UTAMA SAAS) -->
+                <div id="view-sa-settings" class="sa-view-section hidden space-y-6 fade-in">
+                    <div class="flex justify-between items-end mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-800">Pengaturan Sistem Utama</h2>
+                            <p class="text-slate-500 mt-1">Konfigurasi platform SaaS, paket langganan, dan integrasi.</p>
+                        </div>
+                        <button onclick="showToast('Pengaturan berhasil disimpan!', 'success')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 shadow-sm transition-colors">
+                            <i data-lucide="save" class="w-5 h-5"></i> Simpan Perubahan
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"><i data-lucide="layout-template" class="w-5 h-5 text-purple-600"></i> Identitas Platform</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1">Nama Aplikasi SaaS</label>
+                                    <input type="text" value="Billingpro Enterprise" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1">Nomor WA Bantuan (Untuk Klien)</label>
+                                    <input type="text" value="0812-9999-8888" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none text-sm">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                            <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"><i data-lucide="tags" class="w-5 h-5 text-purple-600"></i> Harga Paket Langganan</h3>
+                            <div class="space-y-3">
+                                <div class="border border-slate-200 rounded-xl p-3.5 flex justify-between items-center bg-slate-50">
+                                    <div><p class="font-bold text-slate-800 text-sm">Paket Standard</p></div>
+                                    <span class="font-bold text-purple-700 text-sm">Rp 150.000</span>
+                                </div>
+                                <div class="border border-slate-200 rounded-xl p-3.5 flex justify-between items-center bg-slate-50">
+                                    <div><p class="font-bold text-slate-800 text-sm">Paket Premium</p></div>
+                                    <span class="font-bold text-purple-700 text-sm">Rp 350.000</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: ADMIN DASHBOARD (KLIEN/BENGKEL)    -->
+    <!-- ========================================== -->
+    <div id="app-admin" class="hidden h-screen w-full fade-in pt-0">
+        <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col shadow-xl flex-shrink-0 relative z-20">
+            <div class="p-6 border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="bg-blue-500 p-2 rounded-lg">
+                        <i data-lucide="wrench" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-white tracking-tight">Billingpro<span class="text-blue-400">.</span></h1>
+                        <p class="text-xs text-slate-400">Enterprise AC Service</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 border-b border-slate-800 bg-slate-800/50">
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Perusahaan Aktif</p>
+                <div class="flex items-center gap-3">
+                    <i data-lucide="building-2" class="w-5 h-5 text-blue-400"></i>
+                    <div class="flex-1 truncate">
+                        <p class="text-sm font-medium text-white truncate">PT Maju Jaya AC</p>
+                        <p class="text-xs text-slate-400 truncate">Admin: Budi Santoso</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+                <button onclick="switchAdminTab('dashboard')" id="btn-dashboard" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all bg-blue-600 text-white shadow-md admin-menu-btn">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <span class="font-medium">Dashboard</span>
+                </button>
+                <button onclick="switchAdminTab('technicians')" id="btn-technicians" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 hover:text-white admin-menu-btn">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                    <span class="font-medium">Teknisi (HRD)</span>
+                </button>
+                <button onclick="switchAdminTab('chat')" id="btn-chat" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 hover:text-white admin-menu-btn relative">
+                    <i data-lucide="message-square" class="w-5 h-5"></i>
+                    <span class="font-medium">Chat & Pesan</span>
+                    <span class="absolute right-4 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">1</span>
+                </button>
+                <button onclick="switchAdminTab('billing')" id="btn-billing" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-slate-800 hover:text-white admin-menu-btn">
+                    <i data-lucide="file-text" class="w-5 h-5"></i>
+                    <span class="font-medium">Order & Billing</span>
+                </button>
+            </nav>
+
+            <div class="p-4 border-t border-slate-800">
+                <button onclick="processLogout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-400/10 transition-all">
+                    <i data-lucide="log-out" class="w-5 h-5"></i>
+                    <span class="font-medium">Keluar (Logout)</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col h-full overflow-hidden bg-slate-50">
+            <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between sticky top-0 z-10">
+                <div class="relative w-96">
+                    <i data-lucide="search" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" placeholder="Cari order, pelanggan..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <p class="text-sm font-bold text-slate-700">Budi Santoso</p>
+                        <p class="text-xs text-slate-500">Administrator Perusahaan</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold border-2 border-blue-200">BS</div>
+                </div>
+            </header>
+
+            <div class="flex-1 overflow-auto p-8 relative">
+                
+                <!-- TAB: DASHBOARD ADMIN -->
+                <div id="view-dashboard" class="admin-view-section block space-y-6 fade-in">
+                    <div class="flex justify-between items-end mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-800">Dashboard Operasional</h2>
+                            <p class="text-slate-500 mt-1">Ringkasan aktivitas PT Maju Jaya AC hari ini.</p>
+                        </div>
+                        <button onclick="openModal('modal-add-order')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 shadow-sm transition-colors">
+                            <i data-lucide="plus" class="w-5 h-5"></i> Buat Order Baru
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600"><i data-lucide="credit-card" class="w-7 h-7"></i></div>
+                            <div><p class="text-sm font-medium text-slate-500">Pendapatan Hari Ini</p><p class="text-2xl font-bold text-slate-800">Rp 750.000</p></div>
+                        </div>
+                        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600"><i data-lucide="wrench" class="w-7 h-7"></i></div>
+                            <div><p class="text-sm font-medium text-slate-500">Order Berjalan</p><p class="text-2xl font-bold text-slate-800">2 Pekerjaan</p></div>
+                        </div>
+                        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600"><i data-lucide="users" class="w-7 h-7"></i></div>
+                            <div><p class="text-sm font-medium text-slate-500">Teknisi Tersedia</p><p class="text-2xl font-bold text-slate-800">4 dari 6 Orang</p></div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+                        <!-- RECENT ORDERS -->
+                        <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+                            <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
+                                <h3 class="font-bold text-slate-800">Order & Billing Terbaru</h3>
+                                <button onclick="switchAdminTab('billing')" class="text-blue-600 text-sm font-medium hover:underline">Lihat Semua</button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500">
+                                            <th class="p-4 font-semibold">Pelanggan & AC</th>
+                                            <th class="p-4 font-semibold">Layanan</th>
+                                            <th class="p-4 font-semibold">Status</th>
+                                            <th class="p-4 font-semibold text-right">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recent-orders-body" class="divide-y divide-slate-100 text-sm">
+                                        <!-- Data will be populated by Firebase -->
+                                        <tr><td colspan="4" class="p-4 text-center text-slate-400">Memuat data pesanan...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- TECHNICIAN STATUS -->
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col">
+                            <div class="p-6 border-b border-slate-200 bg-slate-50/50 flex justify-between items-center">
+                                <h3 class="font-bold text-slate-800">Status Teknisi</h3>
+                                <span class="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded-full">6 Total</span>
+                            </div>
+                            <div class="p-4 flex-1 overflow-y-auto space-y-3 max-h-[400px]">
+                                <!-- Tech 1 -->
+                                <div onclick="openModal('modal-tech-detail')" class="p-3 rounded-xl border border-slate-100 bg-slate-50 flex items-start gap-3 cursor-pointer hover:border-blue-400 hover:shadow-sm transition-all">
+                                    <div class="relative">
+                                        <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-600 border border-slate-300">AP</div>
+                                        <span class="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white bg-green-500"></span>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-bold text-slate-800">Andi Pratama</p>
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-100 text-green-700 inline-block mt-1">Tersedia</span>
+                                    </div>
+                                </div>
+                                <!-- Tech 2 -->
+                                <div onclick="openModal('modal-tech-detail')" class="p-3 rounded-xl border border-slate-100 bg-slate-50 flex items-start gap-3 cursor-pointer hover:border-blue-400 hover:shadow-sm transition-all">
+                                    <div class="relative">
+                                        <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-600 border border-slate-300">BH</div>
+                                        <span class="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white bg-blue-500"></span>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-bold text-slate-800">Budi Hartono</p>
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-100 text-blue-700 inline-block mt-1">Sedang Bekerja</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: TEKNISI ADMIN (HRD) -->
+                <div id="view-technicians" class="admin-view-section hidden fade-in">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Manajemen Teknisi (HRD)</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Kartu Teknisi Bisa Diklik -->
+                        <div onclick="openModal('modal-tech-detail')" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col items-center text-center cursor-pointer hover:border-blue-400 hover:shadow-md transition-all">
+                            <div class="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center font-bold text-2xl text-slate-600 mb-4 border-4 border-slate-50 shadow-sm">AP</div>
+                            <h3 class="font-bold text-lg text-slate-800">Andi Pratama</h3>
+                            <p class="text-sm text-slate-500 mb-3">ID: T-01</p>
+                            <span class="px-2.5 py-1 rounded-full text-xs font-medium border bg-green-100 text-green-700 border-green-200 mb-5">Tersedia / Siap Order</span>
+                            <div class="w-full grid grid-cols-2 gap-4 pt-4 border-t border-slate-100">
+                                <div><p class="text-xs text-slate-500">Job Bulan Ini</p><p class="font-bold text-slate-800">45 Selesai</p></div>
+                                <div><p class="text-xs text-slate-500">Rating</p><p class="font-bold text-amber-500">⭐ 4.8</p></div>
+                            </div>
+                        </div>
+                        <!-- Add New Tech Card -->
+                        <div class="bg-slate-50 rounded-2xl border-2 border-dashed border-slate-300 shadow-sm p-6 flex flex-col items-center justify-center text-center hover:bg-slate-100 hover:border-blue-400 hover:text-blue-600 transition-colors cursor-pointer min-h-[250px]">
+                            <div class="w-14 h-14 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mb-3">
+                                <i data-lucide="plus" class="w-8 h-8"></i>
+                            </div>
+                            <h3 class="font-bold">Tambah Teknisi Baru</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: ORDER & BILLING (TABEL KOMPREHENSIF) -->
+                <div id="view-billing" class="admin-view-section hidden space-y-6 fade-in">
+                    <div class="flex justify-between items-end mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-800">Semua Order & Tagihan</h2>
+                            <p class="text-slate-500 mt-1">Manajemen dan rekapitulasi seluruh pesanan layanan bengkel.</p>
+                        </div>
+                        <button onclick="openModal('modal-add-order')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 shadow-sm transition-colors">
+                            <i data-lucide="plus" class="w-5 h-5"></i> Buat Order Baru
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <!-- Toolbar / Filters -->
+                        <div class="p-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row gap-4 justify-between items-center">
+                            <div class="flex gap-4 w-full sm:w-auto">
+                                <div class="relative w-full sm:w-64">
+                                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                    <input type="text" placeholder="Cari nama atau invoice..." class="w-full pl-9 pr-4 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                                <select class="px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                    <option>Semua Status</option>
+                                    <option>Selesai</option>
+                                    <option>Dikerjakan</option>
+                                    <option>Menunggu</option>
+                                </select>
+                            </div>
+                            <button onclick="showToast('Mengunduh Laporan Excel...', 'success')" class="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors border border-slate-200 bg-white px-3 py-2 rounded-lg shadow-sm w-full sm:w-auto justify-center">
+                                <i data-lucide="download" class="w-4 h-4"></i> Export Excel
+                            </button>
+                        </div>
+
+                        <!-- Data Table -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse min-w-[800px]">
+                                <thead>
+                                    <tr class="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500">
+                                        <th class="p-4 font-semibold">ID & Tanggal</th>
+                                        <th class="p-4 font-semibold">Pelanggan</th>
+                                        <th class="p-4 font-semibold">Detail Pekerjaan</th>
+                                        <th class="p-4 font-semibold">Teknisi</th>
+                                        <th class="p-4 font-semibold text-right">Total</th>
+                                        <th class="p-4 font-semibold text-center">Status</th>
+                                        <th class="p-4 font-semibold text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="billing-orders-body" class="divide-y divide-slate-100 text-sm">
+                                    <!-- Data will be populated by Firebase -->
+                                    <tr><td colspan="7" class="p-4 text-center text-slate-400">Memuat data dari database...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: CHAT ADMIN -->
+                <div id="view-chat" class="admin-view-section hidden fade-in h-[calc(100vh-140px)]">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Chat & Pesan Teknisi</h2>
+                    <div class="flex h-full bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <!-- Chat List (Left) -->
+                        <div class="w-1/3 border-r border-slate-200 flex flex-col bg-slate-50 shrink-0">
+                            <div class="p-4 border-b border-slate-200 bg-white">
+                                <div class="relative">
+                                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                    <input type="text" placeholder="Cari teknisi..." class="w-full pl-9 pr-4 py-2 bg-slate-100 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                </div>
+                            </div>
+                            <div class="flex-1 overflow-y-auto">
+                                <!-- Chat Item Active -->
+                                <div class="p-4 border-b border-slate-100 cursor-pointer bg-blue-50 border-l-4 border-l-blue-600 flex gap-3">
+                                    <div class="relative shrink-0">
+                                        <div class="w-10 h-10 rounded-full bg-blue-200 text-blue-700 flex items-center justify-center font-bold">AP</div>
+                                        <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></span>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex justify-between items-baseline mb-0.5">
+                                            <p class="text-sm font-bold text-slate-800 truncate">Andi Pratama</p>
+                                            <p class="text-[10px] text-blue-600 font-bold">10:42</p>
+                                        </div>
+                                        <p class="text-xs text-slate-800 font-semibold truncate">Pak, pipa kurang 2 meter.</p>
+                                    </div>
+                                </div>
+                                <!-- Chat Item -->
+                                <div class="p-4 border-b border-slate-100 cursor-pointer hover:bg-slate-100 transition-colors flex gap-3">
+                                    <div class="relative shrink-0">
+                                        <div class="w-10 h-10 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold">BH</div>
+                                        <span class="absolute bottom-0 right-0 w-3 h-3 bg-blue-500 border-2 border-white rounded-full"></span>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex justify-between items-baseline mb-0.5">
+                                            <p class="text-sm font-bold text-slate-800 truncate">Budi Hartono</p>
+                                            <p class="text-[10px] text-slate-400">Kemarin</p>
+                                        </div>
+                                        <p class="text-xs text-slate-500 truncate">Siap pak, laporan sudah dikirim.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Chat Area (Right) -->
+                        <div class="flex-1 flex flex-col bg-white">
+                            <!-- Chat Header -->
+                            <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-white shrink-0">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-blue-200 text-blue-700 flex items-center justify-center font-bold">AP</div>
+                                    <div>
+                                        <h4 class="font-bold text-slate-800 text-sm">Andi Pratama</h4>
+                                        <p class="text-xs text-green-600 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-green-500 inline-block"></span> Sedang Bekerja (INV-20231001)</p>
+                                    </div>
+                                </div>
+                                <button class="p-2 text-slate-400 hover:text-blue-600 transition-colors"><i data-lucide="more-vertical" class="w-5 h-5"></i></button>
+                            </div>
+                            <!-- Chat Messages -->
+                            <div class="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50">
+                                <div class="text-center"><span class="text-[10px] text-slate-400 bg-slate-200/50 px-2 py-1 rounded-full">Hari ini</span></div>
+                                <!-- Msg Admin -->
+                                <div class="flex justify-end">
+                                    <div class="bg-blue-600 text-white p-3 rounded-2xl rounded-tr-sm max-w-[75%] shadow-sm">
+                                        <p class="text-sm">Andi, jangan lupa minta tanda tangan Bpk. Ahmad kalau sudah selesai ya.</p>
+                                        <p class="text-[10px] text-blue-200 text-right mt-1">09:15 <i data-lucide="check-check" class="w-3 h-3 inline"></i></p>
+                                    </div>
+                                </div>
+                                <!-- Msg Tech -->
+                                <div class="flex justify-start">
+                                    <div class="bg-white border border-slate-200 p-3 rounded-2xl rounded-tl-sm max-w-[75%] shadow-sm">
+                                        <p class="text-sm text-slate-700">Siap pak. Ini pipa kurang 2 meter, saya beli dulu ya.</p>
+                                        <p class="text-[10px] text-slate-400 text-right mt-1">10:42</p>
+                                    </div>
+                                </div>
+                                <!-- Msg Admin -->
+                                <div class="flex justify-end">
+                                    <div class="bg-blue-600 text-white p-3 rounded-2xl rounded-tr-sm max-w-[75%] shadow-sm">
+                                        <p class="text-sm">Boleh Andi, silakan beli dulu. Nanti notanya difoto dan masukkan ke tambahan material ya.</p>
+                                        <p class="text-[10px] text-blue-200 text-right mt-1">10:45 <i data-lucide="check" class="w-3 h-3 inline text-slate-300"></i></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Chat Input -->
+                            <div class="p-4 border-t border-slate-200 bg-white flex items-center gap-3 shrink-0">
+                                <button class="text-slate-400 hover:text-blue-600 transition-colors"><i data-lucide="paperclip" class="w-5 h-5"></i></button>
+                                <button class="text-slate-400 hover:text-blue-600 transition-colors"><i data-lucide="image" class="w-5 h-5"></i></button>
+                                <input type="text" placeholder="Ketik pesan..." class="flex-1 bg-slate-100 border border-slate-200 rounded-full px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                <button class="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors shadow-md shrink-0"><i data-lucide="send" class="w-4 h-4 ml-0.5"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 2: TEKNISI APP (MOBILE FIRST)         -->
+    <!-- ========================================== -->
+    <div id="app-tech" class="hidden w-full h-screen bg-slate-800 flex items-center justify-center pt-0 pb-4 px-4 sm:p-16">
+        <div class="w-full max-w-[400px] h-full sm:max-h-[850px] bg-slate-50 sm:rounded-[2.5rem] sm:border-[8px] border-slate-900 relative overflow-hidden flex flex-col mobile-frame fade-in">
+            
+            <!-- HEADER UTAMA TEKNISI -->
+            <div id="tech-main-header" class="bg-blue-600 text-white p-5 rounded-b-3xl shadow-md z-10 shrink-0 block">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <p class="text-blue-100 text-xs uppercase tracking-wider mb-0.5">Selamat Bekerja,</p>
+                        <h2 class="text-xl font-bold">Andi Pratama</h2>
+                    </div>
+                    <button onclick="processLogout()" class="w-10 h-10 bg-red-500/20 hover:bg-red-500/50 rounded-full flex items-center justify-center text-red-100 transition-colors">
+                        <i data-lucide="power" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <button class="w-full flex items-center gap-3 bg-blue-700/60 p-3 rounded-xl border border-blue-500 text-left">
+                    <div class="w-3.5 h-3.5 rounded-full bg-amber-400 border border-amber-200 shadow-[0_0_10px_rgba(251,191,36,0.8)]"></div>
+                    <span class="font-medium text-sm flex-1">Sedang Bekerja (Di Lokasi)</span>
+                </button>
+            </div>
+
+            <!-- TUGAS / HOME SECTION (TEKNISI) -->
+            <div id="tech-view-home" class="tech-view-section flex-1 overflow-y-auto p-5 pb-28 space-y-6 bg-slate-50 block">
+                <div>
+                    <h3 class="text-xs font-bold text-slate-400 mb-3 uppercase tracking-widest">Sedang Dikerjakan</h3>
+                    <div class="bg-white rounded-2xl p-5 border border-blue-100 shadow-sm border-t-4 border-t-blue-500 relative">
+                        <div class="absolute top-0 right-0 bg-blue-100 text-blue-700 text-[10px] font-bold px-3 py-1 rounded-bl-lg">PROSES</div>
+                        
+                        <div class="inline-block bg-slate-100 border border-slate-200 px-2 py-1 rounded text-xs font-bold text-slate-600 mt-2 mb-1">
+                            Daikin • 1 PK (Inverter)
+                        </div>
+                        
+                        <h4 class="font-bold text-slate-800 text-lg leading-tight mb-3">Cuci AC Biasa & Isi Full Freon R32</h4>
+                        
+                        <div class="space-y-3 pt-3 border-t border-slate-100">
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0"><i data-lucide="user" class="w-4 h-4 text-slate-500"></i></div>
+                                <div><p class="text-sm font-bold text-slate-700">Bpk. Ahmad</p><p class="text-xs text-slate-500">0812-3456-7890</p></div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center shrink-0"><i data-lucide="map-pin" class="w-4 h-4 text-slate-500"></i></div>
+                                <div><p class="text-sm font-medium text-slate-700 line-clamp-2">Jl. Merdeka No. 10, Blok B</p></div>
+                            </div>
+                        </div>
+                        <div class="mt-5 grid grid-cols-2 gap-3">
+                            <button onclick="showToast('Membuka Navigasi Rute Peta...','success')" class="py-3 bg-slate-100 text-slate-700 font-bold rounded-xl text-sm flex items-center justify-center gap-2 hover:bg-slate-200"><i data-lucide="navigation" class="w-4 h-4"></i> Rute Map</button>
+                            <button onclick="openModal('modal-tech-input')" class="py-3 bg-blue-600 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 hover:bg-blue-700 shadow-md shadow-blue-200"><i data-lucide="check-circle" class="w-4 h-4"></i> Selesai</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHAT SECTION (TEKNISI) -->
+            <div id="tech-view-chat" class="tech-view-section flex-1 bg-slate-50 hidden flex-col pb-16">
+                <!-- Header Chat Khusus -->
+                <div class="p-4 border-b border-slate-200 bg-white flex items-center gap-3 shrink-0 shadow-sm">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold">AD</div>
+                    <div>
+                        <h3 class="font-bold text-sm text-slate-800">Admin Bengkel</h3>
+                        <p class="text-[10px] text-green-500 font-bold">Online</p>
+                    </div>
+                </div>
+                
+                <!-- Area Pesan -->
+                <div class="flex-1 overflow-y-auto p-4 space-y-4">
+                    <div class="text-center"><span class="text-[10px] text-slate-400 bg-slate-200/50 px-2 py-1 rounded-full">Hari ini</span></div>
+                    <!-- Msg Admin -->
+                    <div class="flex justify-start">
+                        <div class="bg-white border border-slate-200 p-3 rounded-2xl rounded-tl-sm max-w-[85%] shadow-sm">
+                            <p class="text-sm text-slate-700">Andi, jangan lupa minta tanda tangan Bpk. Ahmad kalau sudah selesai ya.</p>
+                            <p class="text-[10px] text-slate-400 text-right mt-1">09:15</p>
+                        </div>
+                    </div>
+                    <!-- Msg Tech -->
+                    <div class="flex justify-end">
+                        <div class="bg-blue-600 text-white p-3 rounded-2xl rounded-tr-sm max-w-[85%] shadow-sm">
+                            <p class="text-sm">Siap pak. Ini pipa kurang 2 meter, saya beli dulu ya.</p>
+                            <p class="text-[10px] text-blue-200 text-right mt-1">10:42 <i data-lucide="check-check" class="w-3 h-3 inline"></i></p>
+                        </div>
+                    </div>
+                    <!-- Msg Admin -->
+                    <div class="flex justify-start">
+                        <div class="bg-white border border-slate-200 p-3 rounded-2xl rounded-tl-sm max-w-[85%] shadow-sm">
+                            <p class="text-sm text-slate-700">Boleh Andi, silakan beli dulu. Notanya difoto dan masukkan ke tambahan material ya.</p>
+                            <p class="text-[10px] text-slate-400 text-right mt-1">10:45</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Input Panel -->
+                <div class="p-3 bg-white border-t border-slate-200 flex items-center gap-2 shrink-0">
+                    <button class="text-slate-400 p-1 hover:text-blue-600"><i data-lucide="paperclip" class="w-5 h-5"></i></button>
+                    <input type="text" placeholder="Ketik pesan..." class="flex-1 bg-slate-100 border border-slate-200 rounded-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button class="bg-blue-600 text-white w-9 h-9 rounded-full flex items-center justify-center hover:bg-blue-700 shrink-0"><i data-lucide="send" class="w-4 h-4 ml-0.5"></i></button>
+                </div>
+            </div>
+
+            <!-- Tombol Floating Action (FAB) Selesai Job -->
+            <button id="fab-btn" class="absolute bottom-24 right-5 w-14 h-14 bg-amber-500 text-white rounded-full flex items-center justify-center shadow-[0_8px_20px_-4px_rgba(245,158,11,0.6)] border-2 border-white transform transition active:scale-95 z-20" onclick="openModal('modal-tech-input')">
+                <i data-lucide="pen-tool" class="w-6 h-6"></i>
+            </button>
+
+            <!-- BOTTOM NAVIGATION (DIPERBARUI) -->
+            <div class="absolute bottom-0 w-full bg-white border-t border-slate-200 flex justify-between px-4 pt-2 pb-safe z-30">
+                <button onclick="switchTechTab('home')" id="btn-tech-home" class="tech-menu-btn flex flex-col items-center gap-1 text-blue-600 w-16">
+                    <div class="p-1.5 rounded-lg bg-blue-50"><i data-lucide="clipboard-list" class="w-5 h-5"></i></div>
+                    <span class="text-[10px] font-bold">Tugas</span>
+                </button>
+                <button onclick="switchTechTab('chat')" id="btn-tech-chat" class="tech-menu-btn flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 w-16 relative">
+                    <div class="p-1.5 rounded-lg"><i data-lucide="message-circle" class="w-5 h-5"></i><span class="absolute top-1 right-2.5 w-2 h-2 bg-red-500 border-2 border-white rounded-full"></span></div>
+                    <span class="text-[10px] font-medium">Chat</span>
+                </button>
+                <button class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 w-16">
+                    <div class="p-1.5 rounded-lg"><i data-lucide="history" class="w-5 h-5"></i></div>
+                    <span class="text-[10px] font-medium">Riwayat</span>
+                </button>
+                <button class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 w-16">
+                    <div class="p-1.5 rounded-lg"><i data-lucide="user" class="w-5 h-5"></i></div>
+                    <span class="text-[10px] font-medium">Profil</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- MODALS (POP-UPS)                           -->
+    <!-- ========================================== -->
+
+    <!-- 1. MODAL ADMIN: TAMBAH ORDER BARU (LENGKAP DGN CEKLIS 4 KATEGORI) -->
+    <div id="modal-add-order" class="fixed inset-0 z-[300] bg-slate-900/50 hidden items-center justify-center backdrop-blur-sm transition-all py-4 px-2">
+        <div class="bg-white rounded-3xl w-full max-w-3xl shadow-2xl modal-enter overflow-hidden flex flex-col max-h-full">
+            <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="w-5 h-5 text-blue-600"></i> Buat Order Baru
+                </h3>
+                <button onclick="closeModal('modal-add-order')" class="text-slate-400 hover:text-red-500 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto flex-1 bg-white">
+                <form id="form-add-order" class="space-y-6">
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">1. Data Pelanggan</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Nama Lengkap</label>
+                                <input id="inp-cust-name" type="text" placeholder="Cth: Bpk. Budi" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">No. WhatsApp/HP</label>
+                                <input id="inp-cust-phone" type="tel" placeholder="0812-xxxx" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Alamat Lengkap</label>
+                                <textarea id="inp-cust-addr" rows="2" placeholder="Jalan, RT/RW, Patokan lokasi..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-100">
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">2. Spesifikasi Unit AC</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Merk AC</label>
+                                <select id="inp-ac-brand" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                                    <option value="">-- Pilih Merk --</option>
+                                    <option>Daikin</option><option>Panasonic</option><option>Sharp</option><option>LG</option><option>Samsung</option>
+                                    <option>Gree</option><option>Midea</option><option>Aqua</option><option>TCL</option><option>Changhong</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Kapasitas (PK)</label>
+                                <select id="inp-ac-pk" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                                    <option value="">-- Pilih PK --</option>
+                                    <option>1/2 PK</option><option>3/4 PK</option><option>1 PK</option><option>1.5 PK</option><option>2 PK</option>
+                                    <option>2.5 PK</option><option>3 PK</option><option>Lebih dari 3 PK</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Tipe Teknologi</label>
+                                <select class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                                    <option>Standard</option><option>Inverter</option><option>Low Watt</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Jenis Unit AC</label>
+                                <select class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                                    <option>Split Wall (Dinding)</option><option>Cassette (Plafon)</option><option>Standing Floor</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-100">
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">3. Rincian Pekerjaan (Ceklis)</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <!-- Kategori 1: Perawatan / Cuci -->
+                            <div>
+                                <h5 class="text-sm font-bold text-slate-800 mb-2 flex items-center gap-1"><i data-lucide="droplet" class="w-4 h-4 text-blue-500"></i> Perawatan / Cuci</h5>
+                                <div class="space-y-2">
+                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Cuci AC Split Biasa</span></label>
+                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Cuci AC Inverter</span></label>
+                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Cuci AC Cassette / Standing</span></label>
+                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Cuci Besar (Overhaul)</span></label>
+                                </div>
+                            </div>
+                            
+                            <!-- Kategori 2: Freon -->
+                            <div>
+                                <h5 class="text-sm font-bold text-slate-800 mb-2 flex items-center gap-1"><i data-lucide="wind" class="w-4 h-4 text-sky-500"></i> Penanganan Freon</h5>
+                                <div class="space-y-2">
+                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Cek Tekanan Freon Saja</span></label>
+                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Tambah Freon (R32/R410a/R22)</span></label>
+                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Isi Full Freon + Vakum</span></label>
+                                </div>
+                            </div>
+
+                            <!-- Kategori 3: Instalasi -->
+                            <div>
+                                <h5 class="text-sm font-bold text-slate-800 mb-2 flex items-center gap-1"><i data-lucide="arrow-left-right" class="w-4 h-4 text-amber-500"></i> Bongkar & Pasang</h5>
+                                <div class="space-y-2">
+                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Pasang AC Baru</span></label>
+                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Bongkar AC Saja</span></label>
+                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Bongkar & Pasang (Pindah Titik)</span></label>
+                                </div>
+                            </div>
+
+                            <!-- Kategori 4: Perbaikan/Sparepart -->
+                            <div>
+                                <h5 class="text-sm font-bold text-slate-800 mb-2 flex items-center gap-1"><i data-lucide="tool" class="w-4 h-4 text-red-500"></i> Perbaikan & Sparepart</h5>
+                                <div class="space-y-2">
+                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Perbaikan Bocor Air (Indoor)</span></label>
+                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Perbaikan Modul / PCB Error</span></label>
+                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Ganti Kapasitor</span></label>
+                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Las Pipa Bocor + Flaring</span></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="px-6 py-4 border-t border-slate-200 bg-slate-50 flex justify-end gap-3 shrink-0">
+                <button onclick="closeModal('modal-add-order')" class="px-5 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-200 rounded-xl transition-colors">Batal</button>
+                <button onclick="submitNewOrderToFirebase()" class="px-5 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors shadow-md flex items-center gap-2">
+                    <i data-lucide="send" class="w-4 h-4"></i> Simpan ke Database
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. MODAL ADMIN: DETAIL PROFIL TEKNISI (HRD, TRACKING, PAYROLL) -->
+    <div id="modal-tech-detail" class="fixed inset-0 z-[300] bg-slate-900/60 hidden items-center justify-center backdrop-blur-sm transition-all py-4 px-2">
+        <div class="bg-white rounded-3xl w-full max-w-5xl shadow-2xl modal-enter overflow-hidden flex flex-col max-h-full">
+            <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center shrink-0">
+                <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <i data-lucide="user-cog" class="w-5 h-5 text-blue-600"></i> Data Lengkap Teknisi (HRD)
+                </h3>
+                <button onclick="closeModal('modal-tech-detail')" class="text-slate-400 hover:text-red-500 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto flex-1 bg-slate-50">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Kiri: Profil & Kehadiran -->
+                    <div class="space-y-6">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 text-center shadow-sm relative">
+                            <button class="absolute top-3 right-3 text-slate-400 hover:text-blue-600" title="Edit Profil"><i data-lucide="edit" class="w-4 h-4"></i></button>
+                            <div class="w-24 h-24 rounded-full bg-slate-100 mx-auto flex items-center justify-center font-bold text-3xl text-slate-600 mb-3 border-4 border-slate-50 shadow-sm relative">
+                                AP
+                                <span class="absolute bottom-0 right-1 w-5 h-5 bg-green-500 border-2 border-white rounded-full"></span>
+                            </div>
+                            <h4 class="font-bold text-xl text-slate-800">Andi Pratama</h4>
+                            <p class="text-sm text-slate-500 mb-3">ID: T-01 • 0812-3456-7890</p>
+                            <div class="text-left text-xs text-slate-600 mt-4 space-y-2 border-t border-slate-100 pt-4">
+                                <p><span class="font-bold">KTP:</span> 3271234567890001</p>
+                                <p><span class="font-bold">Alamat:</span> Jl. Kencana Wungu No 4, RT 01/RW 02</p>
+                                <p><span class="font-bold">Sertifikasi:</span> BNSP AC (Aktif s/d 2025)</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                            <h5 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Kehadiran & Shift</h5>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                                    <span class="text-slate-500">Libur Mingguan</span>
+                                    <span class="font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded">Selasa</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-slate-500">Log Absensi (Hari Ini)</span>
+                                    <span class="font-bold text-emerald-600 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> 07:45 WIB</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                            <h5 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Tag Keahlian (Skillset)</h5>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-1 rounded-md text-xs font-semibold">✅ AC Split</span>
+                                <span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-1 rounded-md text-xs font-semibold">✅ Inverter</span>
+                                <span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-1 rounded-md text-xs font-semibold">✅ Cassette/Standing</span>
+                                <span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-1 rounded-md text-xs font-semibold">✅ Las Pipa</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kanan: Keuangan, Riwayat, Tracking, Alat -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                            <div class="flex justify-between items-center mb-4">
+                                <h5 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Keuangan & Komisi (Payroll)</h5>
+                                <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-md border border-blue-100">Skema: 30% Laba Kotor</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                                    <p class="text-sm text-emerald-700 mb-1">Dompet (Belum Cair)</p>
+                                    <p class="text-2xl font-black text-emerald-800">Rp 1.250.000</p>
+                                </div>
+                                <div class="bg-red-50 p-4 rounded-xl border border-red-100">
+                                    <p class="text-sm text-red-600 mb-1">Kasbon / Pinjaman</p>
+                                    <p class="text-2xl font-black text-red-700">Rp 200.000</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex gap-3">
+                                <button class="flex-1 bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 rounded-xl text-sm transition-colors shadow-sm">Cairkan Komisi</button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
+                                <h5 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Riwayat & Garansi</h5>
+                                <div class="flex gap-4 mb-4">
+                                    <div class="flex-1 text-center bg-slate-50 rounded-lg p-2 border border-slate-100">
+                                        <p class="text-[10px] text-slate-500 uppercase">Selesai (Bulan Ini)</p>
+                                        <p class="text-xl font-bold text-slate-800">45 <span class="text-xs font-normal">Job</span></p>
+                                    </div>
+                                    <div class="flex-1 text-center bg-red-50 rounded-lg p-2 border border-red-100">
+                                        <p class="text-[10px] text-red-500 uppercase">Rasio Komplain</p>
+                                        <p class="text-xl font-bold text-red-600">2% <span class="text-xs font-normal">(Aman)</span></p>
+                                    </div>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-xs font-semibold text-slate-700 mb-2">Log Terakhir:</p>
+                                    <ul class="text-xs space-y-2 text-slate-500">
+                                        <li class="flex justify-between border-b border-slate-100 pb-1"><span>INV-001 (Cuci Daikin)</span> <span class="text-emerald-500">Aman</span></li>
+                                        <li class="flex justify-between pb-1"><span>INV-003 (Bongkar)</span> <span class="text-red-500 cursor-pointer hover:underline" title="Klaim Air Netes">Komplain (1)</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="space-y-6">
+                                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                                    <h5 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Tool Checking (Alat)</h5>
+                                    <ul class="text-xs space-y-1.5 text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                        <li class="flex items-center gap-2"><i data-lucide="check-square" class="w-3.5 h-3.5 text-blue-500"></i> Pompa Vakum</li>
+                                        <li class="flex items-center gap-2"><i data-lucide="check-square" class="w-3.5 h-3.5 text-blue-500"></i> Tangga Aluminium</li>
+                                        <li class="flex items-center gap-2"><i data-lucide="alert-circle" class="w-3.5 h-3.5 text-amber-500"></i> Tabung Freon R32 (Sisa 2kg)</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-blue-100 p-5 rounded-2xl border border-blue-200 shadow-sm flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer" onclick="showToast('Membuka Live Tracking Map...', 'success')">
+                                    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
+                                    <h5 class="text-xs font-bold text-blue-800 uppercase tracking-wider mb-2 relative z-10 w-full text-left">Live Tracking (GPS)</h5>
+                                    <i data-lucide="map-pin" class="w-8 h-8 text-red-500 mb-1 relative z-10 group-hover:scale-110 transition-transform"></i>
+                                    <p class="text-[10px] text-slate-600 relative z-10 mb-2">Lokasi Terkini: Jl. Merdeka No 10</p>
+                                    <button class="bg-white px-3 py-1.5 rounded-lg text-xs font-bold text-blue-600 shadow-sm relative z-10 group-hover:bg-blue-50 transition-colors">Buka Peta Live</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 3. MODAL TEKNISI: LAPORAN HASIL PEKERJAAN (LENGKAP DGN DATALIST MATERIAL) -->
+    <div id="modal-tech-input" class="fixed inset-0 z-[300] bg-slate-900/80 hidden items-end sm:items-center justify-center backdrop-blur-sm transition-all sm:py-4">
+        <div class="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-[400px] shadow-2xl modal-enter overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="px-5 py-4 border-b border-slate-200 bg-blue-600 text-white flex justify-between items-center">
+                <h3 class="text-base font-bold flex items-center gap-2"><i data-lucide="clipboard-check" class="w-5 h-5"></i> Laporan Pekerjaan</h3>
+                <button onclick="closeModal('modal-tech-input')" class="text-blue-200 hover:text-white transition-colors bg-blue-700 rounded-full p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            
+            <div class="p-5 overflow-y-auto flex-1 bg-slate-50">
+                <form class="space-y-5">
+                    <div class="bg-blue-50 border border-blue-100 p-3 rounded-xl">
+                        <p class="text-xs text-blue-600 font-bold uppercase mb-1">Customer</p>
+                        <p class="font-bold text-slate-800 text-sm">Bpk. Ahmad - Daikin 1 PK</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Tindakan yang Selesai:</label>
+                        <div class="bg-white border border-slate-200 rounded-xl p-3 space-y-3">
+                            <label class="flex items-start gap-3 cursor-pointer"><input type="checkbox" class="mt-1 w-5 h-5" checked> <span class="text-sm font-medium text-slate-700">Cuci AC Split Selesai</span></label>
+                            <label class="flex items-start gap-3 cursor-pointer"><input type="checkbox" class="mt-1 w-5 h-5" checked> <span class="text-sm font-medium text-slate-700">Isi Freon R32 (Full)</span></label>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Tambah Material (Opsional):</label>
+                        <div class="flex gap-2 mb-2">
+                            <div class="flex-1 relative">
+                                <input type="text" list="material-options" placeholder="Pilih / ketik nama material..." class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                <datalist id="material-options">
+                                    <option value="Freon R32 (per 100 gram)"></option>
+                                    <option value="Freon R410a (per 100 gram)"></option>
+                                    <option value="Freon R22 (per 100 gram)"></option>
+                                    <option value="Pipa Tembaga 1/4 x 3/8 (per meter)"></option>
+                                    <option value="Kabel Listrik 3x1.5 (per meter)"></option>
+                                    <option value="Kapasitor Kompresor 15uF"></option>
+                                    <option value="Kapasitor Kompresor 20uF"></option>
+                                    <option value="Kapasitor Kompresor 25uF"></option>
+                                    <option value="Kapasitor Kompresor 30uF"></option>
+                                    <option value="Kapasitor Kipas (Fan) 1.5uF"></option>
+                                    <option value="Kapasitor Kipas (Fan) 2.0uF"></option>
+                                    <option value="Modul PCB Universal"></option>
+                                    <option value="Termistor (Sensor Suhu)"></option>
+                                    <option value="Isolasi Pipa (Duct Tape)"></option>
+                                </datalist>
+                            </div>
+                            <input type="number" placeholder="Qty" class="w-16 px-2 py-2 bg-white border border-slate-200 rounded-lg text-sm text-center focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <button type="button" class="bg-blue-100 text-blue-600 hover:bg-blue-200 px-3 rounded-lg transition-colors"><i data-lucide="plus" class="w-4 h-4 font-bold"></i></button>
+                        </div>
+                        <div class="bg-white border border-slate-200 rounded-lg p-2 text-xs text-slate-500 italic text-center mt-1">Belum ada material tambahan</div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1">Foto Bukti (Wajib)</label>
+                        <button type="button" class="w-full py-4 border-2 border-dashed border-blue-300 bg-blue-50 text-blue-600 rounded-xl text-sm font-bold flex flex-col items-center justify-center gap-1 hover:bg-blue-100 transition-colors"><i data-lucide="camera" class="w-6 h-6"></i> Buka Kamera / Galeri</button>
+                    </div>
+                </form>
+            </div>
+            <div class="p-4 border-t border-slate-200 bg-white">
+                <button onclick="closeModal('modal-tech-input'); showToast('Laporan pekerjaan berhasil dikirim ke Admin.', 'success')" class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-sm shadow-lg flex items-center justify-center gap-2">
+                    <i data-lucide="check-circle" class="w-5 h-5"></i> Selesaikan Job Ini
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. MODAL ADMIN: CETAK INVOICE -->
+    <div id="modal-invoice" class="fixed inset-0 z-[300] bg-slate-900/60 hidden items-center justify-center backdrop-blur-sm transition-all p-4">
+        <div class="bg-white rounded-xl w-full max-w-lg shadow-2xl modal-enter relative">
+            <button onclick="closeModal('modal-invoice')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 bg-slate-100 rounded-full p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+            
+            <div class="p-8">
+                <div class="flex items-center gap-3 mb-6 border-b border-dashed border-slate-300 pb-6">
+                    <div class="bg-blue-600 p-2 rounded-lg"><i data-lucide="wrench" class="w-6 h-6 text-white"></i></div>
+                    <div>
+                        <h2 class="font-black text-xl text-slate-800">PT MAJU JAYA AC</h2>
+                        <p class="text-xs text-slate-500">Jl. Suka Maju No. 99, Jakarta</p>
+                    </div>
+                </div>
+
+                <div class="flex justify-between mb-6">
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tagihan Kepada</p>
+                        <p class="font-bold text-slate-800 mt-1">Bpk. Ahmad</p>
+                        <p class="text-xs text-slate-500 max-w-[150px]">Jl. Merdeka No. 10</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">No. Invoice</p>
+                        <p class="font-bold text-blue-600 mt-1">INV-20231001</p>
+                        <p class="text-xs text-slate-500">12 Oktober 2023</p>
+                    </div>
+                </div>
+
+                <table class="w-full mb-6">
+                    <thead>
+                        <tr class="border-b border-slate-200 text-xs text-slate-500 text-left">
+                            <th class="pb-2 font-semibold">Deskripsi Layanan (Daikin 1 PK)</th>
+                            <th class="pb-2 font-semibold text-right">Harga</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        <tr>
+                            <td class="py-3 border-b border-slate-100 text-slate-700">Cuci AC Split Biasa</td>
+                            <td class="py-3 border-b border-slate-100 text-right font-medium">Rp 75.000</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 border-b border-slate-100 text-slate-700">Isi Full Freon R32</td>
+                            <td class="py-3 border-b border-slate-100 text-right font-medium">Rp 250.000</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td class="pt-4 font-bold text-slate-800 text-right">TOTAL BAYAR</td>
+                            <td class="pt-4 font-black text-blue-600 text-right text-lg">Rp 325.000</td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <div class="bg-emerald-50 text-emerald-700 px-4 py-2 rounded-lg text-xs font-bold text-center border border-emerald-200 mb-6 flex items-center justify-center gap-2">
+                    <i data-lucide="check-circle-2" class="w-4 h-4"></i> LUNAS (Via Transfer)
+                </div>
+            </div>
+            
+            <div class="bg-slate-50 p-4 rounded-b-xl border-t border-slate-200 flex justify-between gap-3">
+                <button class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center gap-2 transition-colors shadow-sm">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i> Kirim WhatsApp
+                </button>
+                <button onclick="window.print()" class="flex-1 bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 rounded-lg text-sm flex items-center justify-center gap-2 transition-colors shadow-sm">
+                    <i data-lucide="printer" class="w-4 h-4"></i> Cetak / PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. MODAL SUPER ADMIN: DETAIL KLIEN SAAS -->
+    <div id="modal-client-detail" class="fixed inset-0 z-[300] bg-slate-900/60 hidden items-center justify-center backdrop-blur-sm transition-all py-4 px-2">
+        <div class="bg-white rounded-3xl w-full max-w-4xl shadow-2xl modal-enter overflow-hidden flex flex-col max-h-full">
+            <div class="px-6 py-4 border-b border-slate-200 bg-purple-50 flex justify-between items-center shrink-0">
+                <h3 class="text-lg font-bold text-purple-900 flex items-center gap-2">
+                    <i data-lucide="building" class="w-5 h-5 text-purple-600"></i> Detail Klien (SaaS)
+                </h3>
+                <button onclick="closeModal('modal-client-detail')" class="text-slate-400 hover:text-red-500 transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto flex-1 bg-slate-50">
+                <div class="flex items-center gap-4 mb-6 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="w-16 h-16 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-2xl border border-purple-200">MJ</div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-2xl text-slate-800">PT Maju Jaya AC</h4>
+                        <p class="text-sm text-slate-500">Bergabung sejak: 10 Jan 2022 • ID Klien: CL-001</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold border bg-emerald-100 text-emerald-700 border-emerald-200">Status: Aktif (Lunas)</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                        <h5 class="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2">Informasi Kontak</h5>
+                        <div><p class="text-[10px] text-slate-500 uppercase">Admin Pengelola</p><p class="font-bold text-slate-800">Budi Santoso</p></div>
+                        <div><p class="text-[10px] text-slate-500 uppercase">No. WhatsApp</p><p class="font-bold text-slate-800 flex items-center gap-2">0812-3456-7890 <button class="text-emerald-500 hover:text-emerald-600"><i data-lucide="message-circle" class="w-4 h-4"></i></button></p></div>
+                        <div><p class="text-[10px] text-slate-500 uppercase">Alamat Perusahaan</p><p class="font-medium text-slate-700 text-sm">Jl. Suka Maju No. 99, Jakarta</p></div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                        <h5 class="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2">Langganan & Tagihan</h5>
+                        <div><p class="text-[10px] text-slate-500 uppercase">Paket Saat Ini</p><p class="font-bold text-purple-700 text-lg">Premium</p></div>
+                        <div><p class="text-[10px] text-slate-500 uppercase">Jatuh Tempo Berikutnya</p><p class="font-bold text-slate-800">15 Nov 2023</p></div>
+                        <button class="w-full mt-2 py-2 bg-purple-50 text-purple-700 hover:bg-purple-100 font-bold rounded-xl text-xs flex items-center justify-center gap-2 border border-purple-200 transition-colors"><i data-lucide="receipt" class="w-4 h-4"></i> Kirim Invoice via WA</button>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                        <h5 class="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2">Statistik Penggunaan</h5>
+                        <div><div class="flex justify-between items-end mb-1"><p class="text-[10px] text-slate-500 uppercase">Kuota Teknisi</p><p class="font-bold text-slate-800 text-sm">6 / 10</p></div><div class="w-full bg-slate-100 rounded-full h-2"><div class="bg-blue-500 h-2 rounded-full" style="width: 60%"></div></div></div>
+                        <div><p class="text-[10px] text-slate-500 uppercase">Order Diproses</p><p class="font-bold text-slate-800 text-lg">142 Job</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-6 py-4 border-t border-slate-200 bg-white flex justify-between items-center shrink-0">
+                <button class="text-red-500 hover:bg-red-50 px-4 py-2 rounded-xl text-sm font-bold transition-colors flex items-center gap-2">
+                    <i data-lucide="alert-triangle" class="w-4 h-4"></i> Suspend / Blokir
+                </button>
+                <div class="flex gap-3">
+                    <button onclick="closeModal('modal-client-detail')" class="px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-sm transition-colors shadow-md">Tutup Panel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC BROWSER UI -->
+    <script>
+        lucide.createIcons();
+
+        // LOGIC NOTIFIKASI TOAST MENGGANTIKAN ALERT()
+        window.showToast = function(message, type='success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `px-4 py-3 rounded-lg shadow-lg text-white text-sm font-bold fade-in flex items-center gap-2 ${type === 'success' ? 'bg-emerald-500' : 'bg-red-500'}`;
+            toast.innerHTML = `<i data-lucide="${type === 'success' ? 'check-circle' : 'alert-triangle'}" class="w-4 h-4"></i> ${message}`;
+            container.appendChild(toast);
+            lucide.createIcons();
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'transition-opacity', 'duration-300');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // LOGIC RAHASIA UNTUK MEMUNCULKAN LOGIN PEMILIK (KLIK LOGO 3X)
+        let clickCount = 0;
+        let clickTimer;
+        function revealOwner() {
+            clickCount++;
+            clearTimeout(clickTimer);
+            if (clickCount === 3) {
+                document.getElementById('btn-pemilik').classList.remove('hidden');
+                document.getElementById('role-grid').classList.remove('grid-cols-2');
+                document.getElementById('role-grid').classList.add('grid-cols-3');
+                clickCount = 0; 
+            }
+            clickTimer = setTimeout(() => { clickCount = 0; }, 1000);
+        }
+
+        // FUNGSI GANTI APLIKASI (LOGIN / LOGOUT)
+        function processLogin(e) {
+            e.preventDefault();
+            const role = document.querySelector('input[name="role"]:checked').value;
+            
+            document.getElementById('view-login').classList.add('hidden');
+            document.getElementById('view-login').classList.remove('flex');
+            
+            if (role === 'superadmin') {
+                document.getElementById('app-superadmin').classList.remove('hidden');
+                document.getElementById('app-superadmin').classList.add('flex');
+            } else if (role === 'admin') {
+                document.getElementById('app-admin').classList.remove('hidden');
+                document.getElementById('app-admin').classList.add('flex');
+            } else {
+                document.getElementById('app-tech').classList.remove('hidden');
+                document.getElementById('app-tech').classList.add('flex');
+            }
+            setTimeout(() => lucide.createIcons(), 50);
+            showToast('Login berhasil.', 'success');
+        }
+
+        function processLogout() {
+            document.getElementById('app-superadmin').classList.add('hidden');
+            document.getElementById('app-superadmin').classList.remove('flex');
+            document.getElementById('app-admin').classList.add('hidden');
+            document.getElementById('app-admin').classList.remove('flex');
+            document.getElementById('app-tech').classList.add('hidden');
+            document.getElementById('app-tech').classList.remove('flex');
+            
+            document.getElementById('view-login').classList.remove('hidden');
+            document.getElementById('view-login').classList.add('flex');
+        }
+
+        // FUNGSI TAB/MENU DI MASING-MASING APP
+        function switchAdminTab(tabName) {
+            document.querySelectorAll('.admin-view-section').forEach(el => { el.classList.add('hidden'); el.classList.remove('block'); });
+            document.querySelectorAll('.admin-menu-btn').forEach(btn => { btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md'); btn.classList.add('hover:bg-slate-800', 'hover:text-white'); });
+            document.getElementById('view-' + tabName).classList.remove('hidden'); document.getElementById('view-' + tabName).classList.add('block');
+            document.getElementById('btn-' + tabName).classList.remove('hover:bg-slate-800', 'hover:text-white'); document.getElementById('btn-' + tabName).classList.add('bg-blue-600', 'text-white', 'shadow-md');
+        }
+
+        function switchTechTab(tabName) {
+            // Sembunyikan semua tab Teknisi
+            document.querySelectorAll('.tech-view-section').forEach(el => { el.classList.add('hidden'); el.classList.remove('block', 'flex'); });
+            
+            // Reset gaya tombol navigasi bawah
+            document.querySelectorAll('.tech-menu-btn').forEach(btn => { 
+                btn.classList.remove('text-blue-600'); 
+                btn.classList.add('text-slate-400');
+                btn.querySelector('div').classList.remove('bg-blue-50');
+                btn.querySelector('span').classList.remove('font-bold');
+                btn.querySelector('span').classList.add('font-medium');
+            });
+            
+            // Tampilkan Tab yang diklik (jika chat pakai flex untuk layout chat)
+            const targetView = document.getElementById('tech-view-' + tabName);
+            targetView.classList.remove('hidden'); 
+            targetView.classList.add(tabName === 'chat' ? 'flex' : 'block');
+            
+            // Sorot ikon navigasi bawah
+            const activeBtn = document.getElementById('btn-tech-' + tabName);
+            activeBtn.classList.remove('text-slate-400'); 
+            activeBtn.classList.add('text-blue-600');
+            activeBtn.querySelector('div').classList.add('bg-blue-50');
+            activeBtn.querySelector('span').classList.remove('font-medium');
+            activeBtn.querySelector('span').classList.add('font-bold');
+
+            // Logika UI Tambahan (Sembunyikan Header dan Floating Button saat masuk chat)
+            const fab = document.getElementById('fab-btn');
+            const mainHeader = document.getElementById('tech-main-header');
+            if (tabName === 'chat') { 
+                fab.classList.add('hidden'); 
+                mainHeader.classList.add('hidden');
+                mainHeader.classList.remove('block');
+            } else { 
+                fab.classList.remove('hidden'); 
+                mainHeader.classList.remove('hidden');
+                mainHeader.classList.add('block');
+            }
+        }
+
+        function switchSuperAdminTab(tabName) {
+            document.querySelectorAll('.sa-view-section').forEach(el => { el.classList.add('hidden'); el.classList.remove('block'); });
+            document.querySelectorAll('.sa-menu-btn').forEach(btn => { btn.classList.remove('bg-purple-600', 'text-white', 'shadow-md'); btn.classList.add('hover:bg-slate-800', 'hover:text-white'); });
+            document.getElementById('view-sa-' + tabName).classList.remove('hidden'); document.getElementById('view-sa-' + tabName).classList.add('block');
+            document.getElementById('btn-sa-' + tabName).classList.remove('hover:bg-slate-800', 'hover:text-white'); document.getElementById('btn-sa-' + tabName).classList.add('bg-purple-600', 'text-white', 'shadow-md');
+        }
+
+        // FUNGSI BUKA TUTUP MODAL
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+            document.getElementById(modalId).classList.add('flex');
+        }
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+            document.getElementById(modalId).classList.remove('flex');
+        }
+    </script>
+
+    <!-- ========================================== -->
+    <!-- LOGIKA FIREBASE (REALTIME DATABASE / BAAS) -->
+    <!-- ========================================== -->
+    <script type="module">
+        // Menggunakan Firebase SDK v11.6.1 (ES Modules CDN)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Konfigurasi Database - Biarkan format ini, akan disuplai secara otomatis dari server backend
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "DUMMY_KEY", authDomain: "DUMMY", projectId: "DUMMY"
+        };
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'billingpro-v1';
+
+        let app, auth, db;
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+        } catch(e) {
+            console.log("Firebase tidak dikonfigurasi di environment ini. Mode Simulasi Aktif.");
+        }
+
+        let currentUser = null;
+
+        // Jika Firebase berhasil dipasang, lakukan Otentikasi (Anonymous untuk Demo)
+        if (auth) {
+            signInAnonymously(auth).catch((error) => {
+                console.error("Gagal terhubung ke database:", error);
+                showToast("Sistem offline. Fitur tersimpan lokal.", "error");
+            });
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUser = user;
+                    setupRealtimeListeners();
+                }
+            });
+        }
+
+        // FUNGSI MENYIMPAN KE FIREBASE (Dipanggil dari HTML Button)
+        window.submitNewOrderToFirebase = async function() {
+            const custName = document.getElementById('inp-cust-name').value;
+            const custPhone = document.getElementById('inp-cust-phone').value;
+            const custAddr = document.getElementById('inp-cust-addr').value;
+            const acBrand = document.getElementById('inp-ac-brand').value;
+            const acPk = document.getElementById('inp-ac-pk').value;
+
+            if (!custName || !custAddr) {
+                showToast('Mohon lengkapi nama dan alamat pelanggan.', 'error');
+                return;
+            }
+
+            const orderData = {
+                customerName: custName,
+                customerPhone: custPhone,
+                customerAddress: custAddr,
+                acBrand: acBrand || 'Tidak Tahu',
+                acPk: acPk || 'Tidak Tahu',
+                status: 'Menunggu',
+                createdAt: new Date().toISOString(),
+                invoiceId: 'INV-' + Math.floor(Math.random() * 1000000)
+            };
+
+            // Jika tidak ada firebase (sedang diuji lokal)
+            if (!currentUser || !db) {
+                closeModal('modal-add-order');
+                document.getElementById('form-add-order').reset();
+                showToast('Simulasi: Order berhasil dibuat (Offline)', 'success');
+                return;
+            }
+
+            try {
+                // Sesuai aturan: MENGGUNAKAN JALUR KOLEKSI YANG DIIZINKAN (/artifacts/{appId}/public/data/{collection})
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'orders'), orderData);
+                closeModal('modal-add-order');
+                document.getElementById('form-add-order').reset();
+                showToast('Sukses! Order tersimpan ke Firebase.', 'success');
+            } catch (e) {
+                console.error(e);
+                showToast('Gagal menyimpan data pesanan.', 'error');
+            }
+        }
+
+        // FUNGSI MEMBACA DARI FIREBASE SECARA REALTIME
+        function setupRealtimeListeners() {
+            if (!currentUser || !db) return;
+
+            const ordersCollection = collection(db, 'artifacts', appId, 'public', 'data', 'orders');
+            
+            // onSnapshot otomatis akan menarik data secara real-time dari database jika ada orderan baru
+            onSnapshot(query(ordersCollection), (snapshot) => {
+                const billingTable = document.getElementById('billing-orders-body');
+                const recentTable = document.getElementById('recent-orders-body');
+                
+                if (!billingTable || !recentTable) return;
+                
+                let htmlContent = '';
+                
+                if (snapshot.empty) {
+                    htmlContent = `<tr><td colspan="7" class="p-4 text-center text-slate-400">Belum ada order. Klik "Buat Order Baru" untuk mulai.</td></tr>`;
+                    billingTable.innerHTML = htmlContent;
+                    recentTable.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">Belum ada order.</td></tr>`;
+                    return;
+                }
+
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const dateStr = new Date(data.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+                    
+                    htmlContent += `
+                        <tr class="hover:bg-blue-50/50 transition-colors">
+                            <td class="p-4">
+                                <p class="font-bold text-blue-600">${data.invoiceId}</p>
+                                <p class="text-xs text-slate-500">${dateStr}</p>
+                            </td>
+                            <td class="p-4">
+                                <p class="font-bold text-slate-800">${data.customerName}</p>
+                                <p class="text-xs text-slate-500 truncate w-32" title="${data.customerAddress}">${data.customerAddress}</p>
+                            </td>
+                            <td class="p-4">
+                                <p class="text-slate-800 font-medium">Servis AC ${data.acBrand}</p>
+                                <p class="text-xs text-slate-500">${data.acPk}</p>
+                            </td>
+                            <td class="p-4"><span class="font-medium text-slate-400">-</span></td>
+                            <td class="p-4 text-right font-bold text-slate-400">-</td>
+                            <td class="p-4 text-center"><span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700 border border-amber-200">${data.status}</span></td>
+                            <td class="p-4 text-center">
+                                <div class="flex justify-center gap-2">
+                                    <button class="p-1.5 text-slate-400 hover:text-blue-600 bg-white border border-slate-200 rounded shadow-sm" title="Tugaskan Teknisi"><i data-lucide="user-plus" class="w-4 h-4"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                // Render ulang HTML ke dalam layar
+                billingTable.innerHTML = htmlContent;
+                recentTable.innerHTML = htmlContent; // Menggunakan data sama untuk simulasi tabel dashboard
+                lucide.createIcons();
+            }, (error) => {
+                console.error("Gagal memuat data realtime", error);
+                showToast("Koneksi data terputus sementara.", "error");
+            });
+        }
+    </script>
+</body>
+</html>
