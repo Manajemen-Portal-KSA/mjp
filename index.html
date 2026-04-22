@@ -768,77 +768,96 @@
                     </div>
 
                     <div class="pt-4 border-t border-slate-100">
-                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">2. Spesifikasi Unit AC</h4>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-1">Merk AC</label>
-                                <select id="inp-ac-brand" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
-                                    <option value="">-- Pilih Merk --</option>
-                                    <option>Daikin</option><option>Panasonic</option><option>Sharp</option><option>LG</option><option>Samsung</option>
-                                    <option>Gree</option><option>Midea</option><option>Aqua</option><option>TCL</option><option>Changhong</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-1">Kapasitas (PK)</label>
-                                <select id="inp-ac-pk" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
-                                    <option value="">-- Pilih PK --</option>
-                                    <option>1/2 PK</option><option>3/4 PK</option><option>1 PK</option><option>1.5 PK</option><option>2 PK</option>
-                                    <option>2.5 PK</option><option>3 PK</option><option>Lebih dari 3 PK</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-1">Tipe Teknologi</label>
-                                <select class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
-                                    <option>Standard</option><option>Inverter</option><option>Low Watt</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-1">Jenis Unit AC</label>
-                                <select class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
-                                    <option>Split Wall (Dinding)</option><option>Cassette (Plafon)</option><option>Standing Floor</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">2. Detail Unit AC & Pekerjaan</h4>
+                        
+                        <!-- List Dinamis Unit AC -->
+                        <div id="ac-unit-list" class="space-y-6">
+                            <!-- Template Unit AC 1 -->
+                            <div class="ac-unit-item relative border-2 border-slate-200 rounded-2xl p-5 bg-white shadow-sm">
+                                <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
+                                    <h4 class="unit-title text-sm font-bold text-blue-700 uppercase tracking-wider flex items-center gap-2">
+                                        <i data-lucide="server" class="w-4 h-4"></i> Data Unit AC 1
+                                    </h4>
+                                    <button type="button" class="remove-unit-btn hidden text-red-500 hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center gap-1" onclick="removeACUnit(this)">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i> Hapus Unit
+                                    </button>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">Merk AC</label>
+                                        <select class="ac-brand w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                                            <option value="">-- Pilih Merk --</option>
+                                            <option>Daikin</option><option>Panasonic</option><option>Sharp</option><option>LG</option><option>Samsung</option>
+                                            <option>Gree</option><option>Midea</option><option>Aqua</option><option>TCL</option><option>Changhong</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">Kapasitas (PK)</label>
+                                        <select class="ac-pk w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                                            <option value="">-- Pilih PK --</option>
+                                            <option>1/2 PK</option><option>3/4 PK</option><option>1 PK</option><option>1.5 PK</option><option>2 PK</option>
+                                            <option>2.5 PK</option><option>3 PK</option><option>Lebih dari 3 PK</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">Tipe Teknologi</label>
+                                        <select class="ac-tech w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                                            <option>Standard</option><option>Inverter</option><option>Low Watt</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">Jenis Unit AC</label>
+                                        <select class="ac-type w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                                            <option>Split Wall (Dinding)</option><option>Cassette (Plafon)</option><option>Standing Floor</option>
+                                        </select>
+                                    </div>
+                                </div>
 
-                    <div class="pt-4 border-t border-slate-100">
-                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">3. Rincian Pekerjaan (Bisa pilih lebih dari satu)</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                            <div>
-                                <h5 class="text-sm font-bold text-slate-800 mb-2 flex items-center gap-1"><i data-lucide="droplet" class="w-4 h-4 text-blue-500"></i> Perawatan / Cuci</h5>
-                                <div class="space-y-2">
-                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Cuci AC Split Biasa</span></label>
-                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Cuci AC Inverter</span></label>
-                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Cuci AC Cassette / Standing</span></label>
-                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Cuci Besar (Overhaul)</span></label>
-                                </div>
-                            </div>
-                            <div>
-                                <h5 class="text-sm font-bold text-slate-800 mb-2 flex items-center gap-1"><i data-lucide="wind" class="w-4 h-4 text-sky-500"></i> Penanganan Freon</h5>
-                                <div class="space-y-2">
-                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Cek Tekanan Freon Saja</span></label>
-                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Tambah Freon (R32/R410a/R22)</span></label>
-                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Isi Full Freon + Vakum</span></label>
-                                </div>
-                            </div>
-                            <div>
-                                <h5 class="text-sm font-bold text-slate-800 mb-2 flex items-center gap-1"><i data-lucide="arrow-left-right" class="w-4 h-4 text-amber-500"></i> Bongkar & Pasang</h5>
-                                <div class="space-y-2">
-                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Pasang AC Baru</span></label>
-                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Bongkar AC Saja</span></label>
-                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Bongkar & Pasang (Pindah Titik)</span></label>
-                                </div>
-                            </div>
-                            <div>
-                                <h5 class="text-sm font-bold text-slate-800 mb-2 flex items-center gap-1"><i data-lucide="tool" class="w-4 h-4 text-red-500"></i> Perbaikan & Sparepart</h5>
-                                <div class="space-y-2">
-                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Perbaikan Bocor Air (Indoor)</span></label>
-                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Perbaikan Modul / PCB Error</span></label>
-                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Ganti Kapasitor</span></label>
-                                    <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-sm text-slate-700 leading-tight">Las Pipa Bocor + Flaring</span></label>
+                                <h5 class="text-sm font-bold text-slate-800 mb-3 border-t border-slate-100 pt-4">Rincian Pekerjaan (Ceklis)</h5>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                    <div>
+                                        <h5 class="text-xs font-bold text-slate-700 mb-2 flex items-center gap-1"><i data-lucide="droplet" class="w-3.5 h-3.5 text-blue-500"></i> Perawatan / Cuci</h5>
+                                        <div class="space-y-1.5">
+                                            <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-0.5 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-xs text-slate-700 font-medium">Cuci AC Split Biasa</span></label>
+                                            <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-0.5 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-xs text-slate-700 font-medium">Cuci AC Inverter</span></label>
+                                            <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-0.5 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-xs text-slate-700 font-medium">Cuci AC Cassette / Standing</span></label>
+                                            <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-0.5 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-xs text-slate-700 font-medium">Cuci Besar (Overhaul)</span></label>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-xs font-bold text-slate-700 mb-2 flex items-center gap-1"><i data-lucide="wind" class="w-3.5 h-3.5 text-sky-500"></i> Penanganan Freon</h5>
+                                        <div class="space-y-1.5">
+                                            <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-0.5 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-xs text-slate-700 font-medium">Cek Tekanan Freon Saja</span></label>
+                                            <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-0.5 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-xs text-slate-700 font-medium">Tambah Freon (R32/R410a/R22)</span></label>
+                                            <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-0.5 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-xs text-slate-700 font-medium">Isi Full Freon + Vakum</span></label>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-xs font-bold text-slate-700 mb-2 flex items-center gap-1"><i data-lucide="arrow-left-right" class="w-3.5 h-3.5 text-amber-500"></i> Bongkar & Pasang</h5>
+                                        <div class="space-y-1.5">
+                                            <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-0.5 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-xs text-slate-700 font-medium">Pasang AC Baru</span></label>
+                                            <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-0.5 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-xs text-slate-700 font-medium">Bongkar AC Saja</span></label>
+                                            <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-0.5 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-xs text-slate-700 font-medium">Bongkar & Pasang (Pindah Titik)</span></label>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-xs font-bold text-slate-700 mb-2 flex items-center gap-1"><i data-lucide="tool" class="w-3.5 h-3.5 text-red-500"></i> Perbaikan & Sparepart</h5>
+                                        <div class="space-y-1.5">
+                                            <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-0.5 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-xs text-slate-700 font-medium">Perbaikan Bocor Air (Indoor)</span></label>
+                                            <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-0.5 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-xs text-slate-700 font-medium">Perbaikan Modul / PCB Error</span></label>
+                                            <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-0.5 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-xs text-slate-700 font-medium">Ganti Kapasitor</span></label>
+                                            <label class="flex items-start gap-2 cursor-pointer"><input type="checkbox" class="mt-0.5 w-4 h-4 text-blue-600 rounded border-slate-300"> <span class="text-xs text-slate-700 font-medium">Las Pipa Bocor + Flaring</span></label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Tombol Tambah Unit -->
+                        <button type="button" onclick="addACUnit()" class="mt-5 w-full py-3.5 border-2 border-dashed border-blue-400 text-blue-600 hover:bg-blue-50 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-colors shadow-sm">
+                            <i data-lucide="plus-circle" class="w-5 h-5"></i> Tambah Unit AC Lainnya
+                        </button>
                     </div>
                 </form>
             </div>
@@ -1399,20 +1418,32 @@
             const custName = document.getElementById('inp-cust-name').value;
             const custPhone = document.getElementById('inp-cust-phone').value;
             const custAddr = document.getElementById('inp-cust-addr').value;
-            const acBrand = document.getElementById('inp-ac-brand').value;
-            const acPk = document.getElementById('inp-ac-pk').value;
 
             if (!custName || !custAddr) {
                 showToast('Mohon lengkapi nama dan alamat pelanggan.', 'error');
                 return;
             }
 
+            // Ambil semua data dari multiple unit AC secara dinamis
+            let brands = [];
+            let pks = [];
+            document.querySelectorAll('.ac-unit-item').forEach(unit => {
+                const brand = unit.querySelector('.ac-brand').value || 'Tidak Tahu';
+                const pk = unit.querySelector('.ac-pk').value || 'Tidak Tahu';
+                brands.push(brand);
+                pks.push(pk);
+            });
+
+            // Gabungkan array menjadi string agar format tabel admin tetap rapi tanpa harus merombak Listener Firebase
+            const acBrandStr = brands.join(', ');
+            const acPkStr = pks.join(', ');
+
             const orderData = {
                 customerName: custName,
                 customerPhone: custPhone,
                 customerAddress: custAddr,
-                acBrand: acBrand || 'Tidak Tahu',
-                acPk: acPk || 'Tidak Tahu',
+                acBrand: acBrandStr,
+                acPk: acPkStr,
                 status: 'Menunggu',
                 createdAt: new Date().toISOString(),
                 invoiceId: 'INV-' + Math.floor(Math.random() * 1000000)
@@ -1421,7 +1452,7 @@
             // Jika tidak ada firebase (sedang diuji lokal)
             if (!currentUser || !db) {
                 closeModal('modal-add-order');
-                document.getElementById('form-add-order').reset();
+                resetOrderForm();
                 showToast('Simulasi: Order berhasil dibuat (Mode Offline)', 'success');
                 return;
             }
@@ -1429,12 +1460,57 @@
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'orders'), orderData);
                 closeModal('modal-add-order');
-                document.getElementById('form-add-order').reset();
+                resetOrderForm();
                 showToast('Sukses! Order tersimpan ke Firebase.', 'success');
             } catch (e) {
                 console.error(e);
                 showToast('Gagal menyimpan data pesanan.', 'error');
             }
+        }
+
+        // Fungsi khusus reset form & membuang unit tambahan agar bersih untuk order selanjutnya
+        function resetOrderForm() {
+            document.getElementById('form-add-order').reset();
+            const container = document.getElementById('ac-unit-list');
+            while (container.children.length > 1) {
+                container.removeChild(container.lastChild);
+            }
+        }
+
+        // FUNGSI UNTUK MENDUPLIKAT (CLONE) FORM UNIT AC
+        window.addACUnit = function() {
+            const container = document.getElementById('ac-unit-list');
+            const firstUnit = container.querySelector('.ac-unit-item');
+            const newUnit = firstUnit.cloneNode(true);
+
+            // Reset nilai di form yang baru diclone
+            newUnit.querySelectorAll('select').forEach(sel => sel.selectedIndex = 0);
+            newUnit.querySelectorAll('input[type="checkbox"]').forEach(chk => chk.checked = false);
+
+            // Update Judul "Data Unit AC [X]"
+            const unitCount = container.children.length + 1;
+            const title = newUnit.querySelector('.unit-title');
+            if (title) title.innerHTML = `<i data-lucide="server" class="w-4 h-4"></i> Data Unit AC ${unitCount}`;
+
+            // Tampilkan tombol Hapus (Tanda silang merah) di form baru
+            const removeBtn = newUnit.querySelector('.remove-unit-btn');
+            if (removeBtn) removeBtn.classList.remove('hidden');
+
+            container.appendChild(newUnit);
+            lucide.createIcons(); // Render ulang ikon Lucide di form baru
+        }
+
+        // FUNGSI UNTUK MENGHAPUS UNIT AC
+        window.removeACUnit = function(btn) {
+            btn.closest('.ac-unit-item').remove();
+            
+            // Render ulang urutan angka "Data Unit AC 1, 2, dst"
+            const container = document.getElementById('ac-unit-list');
+            const units = container.querySelectorAll('.ac-unit-item');
+            units.forEach((unit, index) => {
+                const title = unit.querySelector('.unit-title');
+                if (title) title.innerHTML = `<i data-lucide="server" class="w-4 h-4"></i> Data Unit AC ${index + 1}`;
+            });
         }
 
         // FUNGSI MEMBACA DARI FIREBASE SECARA REALTIME
