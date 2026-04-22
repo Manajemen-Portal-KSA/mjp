@@ -1374,7 +1374,7 @@
         // Menggunakan Firebase SDK v11.6.1 (ES Modules CDN)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Konfigurasi Firebase ANDA
         const firebaseConfig = {
@@ -1413,6 +1413,26 @@
             });
         }
 
+        // FUNGSI MEMBATALKAN ORDER (CANCEL ORDER)
+        window.cancelOrder = async function(orderId) {
+            if (!currentUser || !db) {
+                showToast('Fitur ini membutuhkan koneksi database aktif', 'error');
+                return;
+            }
+            if(confirm('Apakah Anda yakin ingin membatalkan order ini?')) {
+                try {
+                    const orderRef = doc(db, 'artifacts', appId, 'public', 'data', 'orders', orderId);
+                    await updateDoc(orderRef, {
+                        status: 'Dibatalkan'
+                    });
+                    showToast('Order berhasil dibatalkan', 'success');
+                } catch(e) {
+                    console.error(e);
+                    showToast('Gagal membatalkan order', 'error');
+                }
+            }
+        }
+
         // FUNGSI MENYIMPAN KE FIREBASE (Dipanggil dari HTML Button)
         window.submitNewOrderToFirebase = async function() {
             const custName = document.getElementById('inp-cust-name').value;
@@ -1434,7 +1454,7 @@
                 pks.push(pk);
             });
 
-            // Gabungkan array menjadi string agar format tabel admin tetap rapi tanpa harus merombak Listener Firebase
+            // Gabungkan array menjadi string (misal: "Daikin, Sharp", "1 PK, 1/2 PK")
             const acBrandStr = brands.join(', ');
             const acPkStr = pks.join(', ');
 
@@ -1469,11 +1489,13 @@
         }
 
         // Fungsi khusus reset form & membuang unit tambahan agar bersih untuk order selanjutnya
-        function resetOrderForm() {
+        window.resetOrderForm = function() {
             document.getElementById('form-add-order').reset();
             const container = document.getElementById('ac-unit-list');
-            while (container.children.length > 1) {
-                container.removeChild(container.lastChild);
+            if (container) {
+                while (container.children.length > 1) {
+                    container.removeChild(container.lastChild);
+                }
             }
         }
 
@@ -1539,6 +1561,22 @@
                     const data = doc.data();
                     const dateStr = new Date(data.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
                     
+                    let statusBadge = '';
+                    if (data.status === 'Selesai') statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">Selesai</span>`;
+                    else if (data.status === 'Dibatalkan') statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700 border border-red-200">Dibatalkan</span>`;
+                    else if (data.status === 'Dikerjakan') statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700 border border-blue-200">Dikerjakan</span>`;
+                    else statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700 border border-amber-200">${data.status}</span>`;
+
+                    let actionButtons = `
+                        <div class="flex justify-center gap-2">
+                            <button class="p-1.5 text-slate-400 hover:text-blue-600 bg-white border border-slate-200 rounded shadow-sm" title="Tugaskan Teknisi"><i data-lucide="user-plus" class="w-4 h-4"></i></button>
+                    `;
+                    // Jika belum dibatalkan dan belum selesai, tampilkan opsi Cancel Order
+                    if (data.status !== 'Selesai' && data.status !== 'Dibatalkan') {
+                        actionButtons += `<button onclick="cancelOrder('${doc.id}')" class="p-1.5 text-slate-400 hover:text-red-500 bg-white border border-slate-200 rounded shadow-sm" title="Batalkan Order"><i data-lucide="x-circle" class="w-4 h-4"></i></button>`;
+                    }
+                    actionButtons += `</div>`;
+
                     htmlContent += `
                         <tr class="hover:bg-blue-50/50 transition-colors">
                             <td class="p-4">
@@ -1555,12 +1593,8 @@
                             </td>
                             <td class="p-4"><span class="font-medium text-slate-400">-</span></td>
                             <td class="p-4 text-right font-bold text-slate-400">-</td>
-                            <td class="p-4 text-center"><span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700 border border-amber-200">${data.status}</span></td>
-                            <td class="p-4 text-center">
-                                <div class="flex justify-center gap-2">
-                                    <button class="p-1.5 text-slate-400 hover:text-blue-600 bg-white border border-slate-200 rounded shadow-sm" title="Tugaskan Teknisi"><i data-lucide="user-plus" class="w-4 h-4"></i></button>
-                                </div>
-                            </td>
+                            <td class="p-4 text-center">${statusBadge}</td>
+                            <td class="p-4 text-center">${actionButtons}</td>
                         </tr>
                     `;
                 });
