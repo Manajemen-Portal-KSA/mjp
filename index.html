@@ -173,7 +173,7 @@
                             <h2 class="text-2xl font-bold text-slate-800">Overview Bisnis (SaaS)</h2>
                             <p class="text-slate-500 mt-1">Pantau seluruh bengkel AC yang menyewa aplikasi Anda.</p>
                         </div>
-                        <button onclick="openModal('modal-sa-add-client')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 shadow-sm transition-colors">
+                        <button type="button" onclick="openModal('modal-sa-add-client')" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 shadow-sm transition-colors">
                             <i data-lucide="plus" class="w-5 h-5"></i> Daftarkan Klien Baru
                         </button>
                     </div>
@@ -550,7 +550,7 @@
                                     <input type="text" placeholder="Cari teknisi..." class="w-full pl-9 pr-4 py-2 bg-slate-100 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
                                 </div>
                             </div>
-                            <div class="flex-1 overflow-y-auto">
+                            <div id="admin-chat-list-container" class="flex-1 overflow-y-auto">
                                 <div class="p-4 border-b border-slate-100 cursor-pointer bg-blue-50 border-l-4 border-l-blue-600 flex gap-3">
                                     <div class="relative shrink-0">
                                         <div class="w-10 h-10 rounded-full bg-blue-200 text-blue-700 flex items-center justify-center font-bold">AP</div>
@@ -590,7 +590,7 @@
                                 </div>
                                 <button type="button" class="p-2 text-slate-400 hover:text-blue-600 transition-colors"><i data-lucide="more-vertical" class="w-5 h-5"></i></button>
                             </div>
-                            <div class="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50">
+                            <div id="admin-chat-messages" class="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50">
                                 <div class="text-center"><span class="text-[10px] text-slate-400 bg-slate-200/50 px-2 py-1 rounded-full">Hari ini</span></div>
                                 <div class="flex justify-end">
                                     <div class="bg-blue-600 text-white p-3 rounded-2xl rounded-tr-sm max-w-[75%] shadow-sm">
@@ -1176,7 +1176,7 @@
             </div>
 
             <div class="px-6 py-4 border-t border-slate-200 bg-white flex justify-between items-center shrink-0">
-                <button type="button" onclick="suspendClientAccount()" class="text-red-500 hover:bg-red-50 px-4 py-2 rounded-xl text-sm font-bold transition-colors flex items-center gap-2">
+                <button type="button" id="btn-suspend-client" class="text-red-500 hover:bg-red-50 px-4 py-2 rounded-xl text-sm font-bold transition-colors flex items-center gap-2">
                     <i data-lucide="alert-triangle" class="w-4 h-4"></i> Suspend / Blokir
                 </button>
                 <div class="flex gap-3">
@@ -1337,7 +1337,7 @@
         }
 
         // FUNGSI GANTI APLIKASI (LOGIN / LOGOUT)
-        function processLogin(e) {
+        window.processLogin = function(e) {
             try {
                 if (e) e.preventDefault();
                 
@@ -1363,6 +1363,8 @@
                     const adminTechs = document.getElementById('admin-tech-list');
                     const hrdTechs = document.getElementById('hrd-tech-list');
                     const compActive = document.getElementById('admin-active-company');
+                    const chatListContainer = document.getElementById('admin-chat-list-container');
+                    const chatMessagesArea = document.getElementById('admin-chat-messages');
 
                     if(statRev) statRev.innerText = "Rp 0";
                     if(statJobs) statJobs.innerText = "0 Pekerjaan";
@@ -1370,6 +1372,8 @@
                     if(adminTechs) adminTechs.innerHTML = '<p class="text-xs text-slate-500 p-4 text-center">Belum ada teknisi terdaftar.</p>';
                     if(hrdTechs) hrdTechs.innerHTML = `<div onclick="openModal('modal-add-tech')" class="bg-slate-50 rounded-2xl border-2 border-dashed border-slate-300 shadow-sm p-6 flex flex-col items-center justify-center text-center hover:bg-slate-100 hover:border-blue-400 hover:text-blue-600 transition-colors cursor-pointer min-h-[250px]"><div class="w-14 h-14 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mb-3"><i data-lucide="plus" class="w-8 h-8"></i></div><h3 class="font-bold">Tambah Teknisi Baru</h3></div>`;
                     if(compActive) compActive.innerText = window.newRegisteredCompanyName;
+                    if(chatListContainer) chatListContainer.innerHTML = '<p class="text-xs text-slate-500 p-4 text-center">Belum ada obrolan.</p>';
+                    if(chatMessagesArea) chatMessagesArea.innerHTML = '<div class="flex h-full items-center justify-center text-slate-400 text-sm">Pilih teknisi untuk mulai obrolan</div>';
                 }
 
                 const viewLogin = document.getElementById('view-login');
@@ -1403,7 +1407,7 @@
             return false; 
         }
 
-        function processLogout() {
+        window.processLogout = function() {
             document.getElementById('app-superadmin').classList.add('hidden');
             document.getElementById('app-superadmin').classList.remove('flex');
             document.getElementById('app-admin').classList.add('hidden');
@@ -1416,14 +1420,14 @@
         }
 
         // FUNGSI TAB/MENU DI MASING-MASING APP
-        function switchAdminTab(tabName) {
+        window.switchAdminTab = function(tabName) {
             document.querySelectorAll('.admin-view-section').forEach(el => { el.classList.add('hidden'); el.classList.remove('block'); });
             document.querySelectorAll('.admin-menu-btn').forEach(btn => { btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md'); btn.classList.add('hover:bg-slate-800', 'hover:text-white'); });
             document.getElementById('view-' + tabName).classList.remove('hidden'); document.getElementById('view-' + tabName).classList.add('block');
             document.getElementById('btn-' + tabName).classList.remove('hover:bg-slate-800', 'hover:text-white'); document.getElementById('btn-' + tabName).classList.add('bg-blue-600', 'text-white', 'shadow-md');
         }
 
-        function switchTechTab(tabName) {
+        window.switchTechTab = function(tabName) {
             document.querySelectorAll('.tech-view-section').forEach(el => { el.classList.add('hidden'); el.classList.remove('block', 'flex'); });
             document.querySelectorAll('.tech-menu-btn').forEach(btn => { 
                 btn.classList.remove('text-blue-600'); 
@@ -1457,7 +1461,7 @@
             }
         }
 
-        function switchSuperAdminTab(tabName) {
+        window.switchSuperAdminTab = function(tabName) {
             document.querySelectorAll('.sa-view-section').forEach(el => { el.classList.add('hidden'); el.classList.remove('block'); });
             document.querySelectorAll('.sa-menu-btn').forEach(btn => { btn.classList.remove('bg-purple-600', 'text-white', 'shadow-md'); btn.classList.add('hover:bg-slate-800', 'hover:text-white'); });
             document.getElementById('view-sa-' + tabName).classList.remove('hidden'); document.getElementById('view-sa-' + tabName).classList.add('block');
@@ -1465,11 +1469,11 @@
         }
 
         // FUNGSI BUKA TUTUP MODAL
-        function openModal(modalId) {
+        window.openModal = function(modalId) {
             document.getElementById(modalId).classList.remove('hidden');
             document.getElementById(modalId).classList.add('flex');
         }
-        function closeModal(modalId) {
+        window.closeModal = function(modalId) {
             document.getElementById(modalId).classList.add('hidden');
             document.getElementById(modalId).classList.remove('flex');
         }
@@ -1490,23 +1494,36 @@
             // Gaya Badge Status
             const statusEl = document.getElementById('detail-comp-status');
             statusEl.innerText = `Status: ${status}`;
-            if (status.includes('Lunas') || status.includes('Aktif')) {
+            
+            // DINAMIS: Tombol Suspend atau Aktifkan Akun
+            const suspendBtn = document.getElementById('btn-suspend-client');
+
+            if (status.includes('Lunas') || status.includes('Aktif') || status.includes('Setup Awal')) {
                 statusEl.className = 'px-3 py-1 rounded-full text-xs font-bold border bg-emerald-100 text-emerald-700 border-emerald-200';
-            } else if (status.includes('Menunggak') || status.includes('Blokir')) {
-                statusEl.className = 'px-3 py-1 rounded-full text-xs font-bold border bg-red-100 text-red-700 border-red-200';
+                
+                // Jika aktif, tampilkan tombol Blokir
+                suspendBtn.innerHTML = `<i data-lucide="alert-triangle" class="w-4 h-4"></i> Suspend / Blokir`;
+                suspendBtn.className = 'text-red-500 hover:bg-red-50 px-4 py-2 rounded-xl text-sm font-bold transition-colors flex items-center gap-2';
+                suspendBtn.onclick = () => toggleClientStatus(compName, 'Menunggak (Blokir)');
             } else {
-                statusEl.className = 'px-3 py-1 rounded-full text-xs font-bold border bg-blue-100 text-blue-700 border-blue-200';
+                statusEl.className = 'px-3 py-1 rounded-full text-xs font-bold border bg-red-100 text-red-700 border-red-200';
+                
+                // Jika sedang di-blokir, tampilkan tombol Aktifkan (Hijau)
+                suspendBtn.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i> Aktifkan Akun`;
+                suspendBtn.className = 'text-emerald-500 hover:bg-emerald-50 px-4 py-2 rounded-xl text-sm font-bold transition-colors flex items-center gap-2';
+                suspendBtn.onclick = () => toggleClientStatus(compName, 'Aktif (Lunas)');
             }
 
             openModal('modal-client-detail');
             lucide.createIcons(); 
         }
 
-        // FUNGSI SUPER ADMIN: SUSPEND CLIENT
-        window.suspendClientAccount = function() {
-            if(confirm('Peringatan: Apakah Anda yakin ingin memblokir klien ini? Mereka tidak akan bisa masuk ke sistem lagi.')) {
+        // FUNGSI SUPER ADMIN: TOGGLE (SUSPEND/AKTIFKAN) CLIENT
+        window.toggleClientStatus = function(compName, newStatus) {
+            const actionText = newStatus.includes('Aktif') ? 'mengaktifkan kembali' : 'memblokir';
+            if(confirm(`Peringatan: Apakah Anda yakin ingin ${actionText} akun klien ${compName}?`)) {
                 closeModal('modal-client-detail');
-                showToast('Akun Klien berhasil disuspend/diblokir.', 'success');
+                showToast(`Status Akun Klien berhasil diubah menjadi ${newStatus}.`, 'success');
             }
         }
 
@@ -1515,6 +1532,7 @@
             const compName = document.getElementById('sa-inp-comp-name').value;
             const adminName = document.getElementById('sa-inp-admin-name').value;
             const adminEmail = document.getElementById('sa-inp-admin-email').value;
+            const adminPhone = document.getElementById('sa-inp-admin-phone').value;
 
             if (!compName || !adminName || !adminEmail) {
                 showToast('Mohon lengkapi Nama Perusahaan dan Email Admin', 'error');
